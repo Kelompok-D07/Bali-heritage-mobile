@@ -1,16 +1,30 @@
-# bali_heritage
+# Bali-heritage-mobile 🍹
 
-A new Flutter project.
+## Anggota Kelompok D07
+- Bastian Adiputra Siregar - 2306245005
+- Muhammad Akmal Abdul Halim - 2306245125
+- Muhammad Adiansyah - 2306244980
+- Husin Hidayatul Hakim - 2306152481
+- Muhammad Zaid Ats Tsabit - 2306224410
 
-## Getting Started
+## Deskripsi dan Manfaat Aplikasi
+Dengan semangat untuk melestarikan budaya dan kerajinan lokal Bali, kami dengan bangga mempersembahkan **Bali Heritage**, sebuah platform inovatif yang memudahkan Anda menjelajahi keindahan kerajinan Bali, khususnya di kota **Denpasar**. Bali Heritage dirancang untuk memfasilitasi para wisatawan, kolektor seni, hingga pencinta budaya tradisional dalam menemukan lokasi-lokasi terbaik untuk membeli barang-barang Bali. Website ini menawarkan fitur-fitur yang lengkap dan interaktif, sehingga Anda bisa dengan mudah menemukan toko atau pasar lokal yang menjual barang-barang yang terdapat di Bali. Tidak hanya membantu menemukan produk terbaik, tetapi Bali Heritage juga memberikan informasi yang bermanfaat mengenai asal-usul kerajinan, tradisi yang melatarbelakanginya, dan tips untuk berbelanja secara cerdas dari review review user kami.
 
-This project is a starting point for a Flutter application.
+Bali Heritage bukan hanya sekadar platform untuk mencari suvenir khas, tetapi juga menjadi jembatan penting untuk mengenal lebih dalam budaya Bali melalui produk-produk yang dijual di Bali. Fokusnya tidak terbatas pada barang-barang tradisional, melainkan mencakup berbagai produk lokal yang dijual oleh para pengrajin dan pedagang Bali.
 
-A few resources to get you started if this is your first Flutter project:
+## Daftar Module:
+| Fitur (Module)         | Deskripsi                                                                                   |
+|------------------------|---------------------------------------------------------------------------------------------|
+| Pengelolaan Produk (Bastian Adiputra Siregar)    | Menampilkan lokasi-lokasi souvenir dengan informasi lengkap.                                |
+| Forum (Husin Hidayatul Hakim)                 | Ruang diskusi bagi pengguna untuk bertanya atau memberikan rekomendasi lokasi baru.         |
+| Review (Muhammad Akmal Abdul Halim)                | Pengguna dapat memberikan ulasan mengenai lokasi yang mereka kunjungi.                      |
+| Bookmark (Muhammad Zaid Ats Tsabit)               | Simpan lokasi-lokasi favorit untuk dikunjungi di kemudian hari.                             |
+| BaliLoka Stories  (Muhammad Adiansyah)     | Memberikan cerita dan sejarah-sejarah terkait beberapa benda unik dari Bali.               |
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Peran/Aktor Pengguna Aplikasi
+- **Admin**
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+  Bisa menambah, mengedit dan mendelete isi dari `homepage` serta bisa menambah, mengedit dan mendelete artikel untuk `BaliLoka Stories`
+- **User**
+
+  Bisa menggunakan fitur fitur pada aplikasi seperti forum, mereview dan memberi ulasan tempat dan lokasi yang pernah dikunjungi serta menggunakan fitur bookmark untuk menyimpan tempat favorit mereka
