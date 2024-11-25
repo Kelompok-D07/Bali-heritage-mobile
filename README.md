@@ -32,27 +32,27 @@ Bali Heritage bukan hanya sekadar platform untuk mencari suvenir khas, tetapi ju
 ## Alur pengintegrasian dengan web service
 - **Django Menyediakan API**
 
-Aplikasi mobile tidak langsung berinteraksi dengan elemen-elemen Django seperti views.py atau templates. Sebagai gantinya, Django bertindak sebagai backend yang menyediakan API berbasis web. API ini menggunakan format XML untuk mengirim dan menerima data. Dengan cara ini, Django tidak hanya melayani aplikasi web tetapi juga aplikasi mobile seperti yang dikembangkan dengan Flutter.
+Aplikasi mobile tidak langsung berinteraksi dengan elemen-elemen Django seperti views.py atau templates. Sebagai gantinya, Django bertindak sebagai backend yang menyediakan API berbasis web. API ini menggunakan format JSON untuk mengirim dan menerima data. Dengan cara ini, Django tidak hanya melayani aplikasi web tetapi juga aplikasi mobile seperti yang dikembangkan dengan Flutter.
 
 - **Aplikasi Mobile Mengirimkan Permintaan ke API Django**
   
-Aplikasi mobile (seperti aplikasi Android atau iOS yang dibuat menggunakan Flutter) mengirimkan HTTP request ke Django melalui endpoint API. Contohnya, aplikasi mobile dapat mengakses endpoint seperti https://pbp.cs.ui.ac.id/bali-heritage/xml.
+Aplikasi mobile (seperti aplikasi Android atau iOS yang dibuat menggunakan Flutter) mengirimkan HTTP request ke Django melalui endpoint API. Contohnya, aplikasi mobile dapat mengakses endpoint seperti https://pbp.cs.ui.ac.id/bali-heritage/json.
 Permintaan ini dapat berupa metode GET (untuk membaca data) atau POST (untuk mengirim data baru).
 
 - **Django Memproses Permintaan**
   
 Django memproses permintaan dari aplikasi mobile menggunakan:
-Serializers: Data dari database Django diubah menjadi format XML yang dapat dimengerti oleh aplikasi mobile.
+Serializers: Data dari database Django diubah menjadi format JSON yang dapat dimengerti oleh aplikasi mobile.
 Django juga memvalidasi data yang diterima dari aplikasi mobile jika metode yang digunakan adalah POST, PUT, atau PATCH.
 
 - **Mengembalikan Respons ke Aplikasi Mobile**
   
 Setelah memproses permintaan:
-Django mengirimkan data dalam bentuk XML response kembali ke aplikasi mobile.
-Contohnya, jika aplikasi mobile meminta daftar produk, Django akan mengambil data produk dari database, memformatnya dalam XML, dan mengirimkannya kembali ke aplikasi mobile.
+Django mengirimkan data dalam bentuk JSON response kembali ke aplikasi mobile.
+Contohnya, jika aplikasi mobile meminta daftar produk, Django akan mengambil data produk dari database, memformatnya dalam JSON, dan mengirimkannya kembali ke aplikasi mobile.
 
 - **Aplikasi Mobile Menampilkan Data**
 
-Aplikasi mobile menggunakan data XML yang diterima dari Django untuk memperbarui antarmuka pengguna. Misalnya:
+Aplikasi mobile menggunakan data JSON yang diterima dari Django untuk memperbarui antarmuka pengguna. Misalnya:
 Menampilkan daftar produk atau lokasi tertentu.
 Mengupdate data pada aplikasi sesuai dengan hasil respons dari Django.
