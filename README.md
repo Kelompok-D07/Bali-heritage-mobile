@@ -28,3 +28,25 @@ Bali Heritage bukan hanya sekadar platform untuk mencari suvenir khas, tetapi ju
 - **User**
 
   Bisa menggunakan fitur fitur pada aplikasi seperti forum, mereview dan memberi ulasan tempat dan lokasi yang pernah dikunjungi serta menggunakan fitur bookmark untuk menyimpan tempat favorit mereka
+
+## Alur pengintegrasian dengan web service
+1. Django Menyediakan API
+Aplikasi mobile tidak langsung berinteraksi dengan elemen-elemen Django seperti views.py atau templates. Sebagai gantinya, Django bertindak sebagai backend yang menyediakan API berbasis web. API ini menggunakan format JSON untuk mengirim dan menerima data. Dengan cara ini, Django tidak hanya melayani aplikasi web tetapi juga aplikasi mobile seperti yang dikembangkan dengan Flutter.
+
+2. Aplikasi Mobile Mengirimkan Permintaan ke API Django
+Aplikasi mobile (seperti aplikasi Android atau iOS yang dibuat menggunakan Flutter) mengirimkan HTTP request ke Django melalui endpoint API. Contohnya, aplikasi mobile dapat mengakses endpoint seperti https://pbp.cs.ui.ac.id/json.
+Permintaan ini dapat berupa metode GET (untuk membaca data) atau POST (untuk mengirim data baru).
+3. Django Memproses Permintaan
+Django memproses permintaan dari aplikasi mobile menggunakan:
+
+Serializers: Data dari database Django diubah menjadi format JSON yang dapat dimengerti oleh aplikasi mobile.
+Django juga memvalidasi data yang diterima dari aplikasi mobile jika metode yang digunakan adalah POST, PUT, atau PATCH.
+4. Mengembalikan Respons ke Aplikasi Mobile
+Setelah memproses permintaan:
+
+Django mengirimkan data dalam bentuk JSON/XML response kembali ke aplikasi mobile.
+Contohnya, jika aplikasi mobile meminta daftar produk, Django akan mengambil data produk dari database, memformatnya dalam JSON/XML, dan mengirimkannya kembali ke aplikasi mobile.
+5. Aplikasi Mobile Menampilkan Data
+Aplikasi mobile menggunakan data JSON/XML yang diterima dari Django untuk memperbarui antarmuka pengguna. Misalnya:
+Menampilkan daftar produk atau lokasi tertentu.
+Mengupdate data pada aplikasi sesuai dengan hasil respons dari Django.
