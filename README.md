@@ -36,7 +36,7 @@ Aplikasi mobile tidak langsung berinteraksi dengan elemen-elemen Django seperti 
 
 - **Aplikasi Mobile Mengirimkan Permintaan ke API Django**
   
-Aplikasi mobile (seperti aplikasi Android atau iOS yang dibuat menggunakan Flutter) mengirimkan HTTP request ke Django melalui endpoint API. Contohnya, aplikasi mobile dapat mengakses endpoint seperti https://pbp.cs.ui.ac.id/xml.
+Aplikasi mobile (seperti aplikasi Android atau iOS yang dibuat menggunakan Flutter) mengirimkan HTTP request ke Django melalui endpoint API. Contohnya, aplikasi mobile dapat mengakses endpoint seperti https://pbp.cs.ui.ac.id/bali-heritage/xml.
 Permintaan ini dapat berupa metode GET (untuk membaca data) atau POST (untuk mengirim data baru).
 
 - **Django Memproses Permintaan**
