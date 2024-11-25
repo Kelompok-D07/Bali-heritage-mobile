@@ -36,16 +36,17 @@ Aplikasi mobile tidak langsung berinteraksi dengan elemen-elemen Django seperti 
 2. Aplikasi Mobile Mengirimkan Permintaan ke API Django
 Aplikasi mobile (seperti aplikasi Android atau iOS yang dibuat menggunakan Flutter) mengirimkan HTTP request ke Django melalui endpoint API. Contohnya, aplikasi mobile dapat mengakses endpoint seperti https://pbp.cs.ui.ac.id/json.
 Permintaan ini dapat berupa metode GET (untuk membaca data) atau POST (untuk mengirim data baru).
+
 3. Django Memproses Permintaan
 Django memproses permintaan dari aplikasi mobile menggunakan:
-
 Serializers: Data dari database Django diubah menjadi format JSON yang dapat dimengerti oleh aplikasi mobile.
 Django juga memvalidasi data yang diterima dari aplikasi mobile jika metode yang digunakan adalah POST, PUT, atau PATCH.
+
 4. Mengembalikan Respons ke Aplikasi Mobile
 Setelah memproses permintaan:
-
 Django mengirimkan data dalam bentuk JSON/XML response kembali ke aplikasi mobile.
 Contohnya, jika aplikasi mobile meminta daftar produk, Django akan mengambil data produk dari database, memformatnya dalam JSON/XML, dan mengirimkannya kembali ke aplikasi mobile.
+
 5. Aplikasi Mobile Menampilkan Data
 Aplikasi mobile menggunakan data JSON/XML yang diterima dari Django untuk memperbarui antarmuka pengguna. Misalnya:
 Menampilkan daftar produk atau lokasi tertentu.
