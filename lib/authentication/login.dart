@@ -1,4 +1,4 @@
-import 'package:bali_heritage/Homepage/homepage.dart';
+import 'package:bali_heritage/Homepage/screens/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
