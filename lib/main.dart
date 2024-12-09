@@ -5,7 +5,6 @@ import 'package:bali_heritage/authentication/login.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:bali_heritage/Homepage/homepage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,7 +35,7 @@ class MyApp extends StatelessWidget {
             background: Colors.white,
           ),
         ),
-        home: const HomePage(),
+        home: const LoginPage(),
       ), // Removed the misplaced semicolon here.
     );
   }
