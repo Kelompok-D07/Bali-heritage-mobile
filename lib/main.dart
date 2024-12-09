@@ -1,8 +1,9 @@
 import 'package:bali_heritage/Forum/forum_create_page.dart';
+import 'package:bali_heritage/authentication/login.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-import 'homepage/homepage.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -27,11 +28,14 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSwatch(
-            primarySwatch: Colors.deepPurple,
-          ).copyWith(secondary: Colors.deepPurple[400]),
+            primarySwatch: Colors.orange,
+          ).copyWith(
+            secondary: Colors.orange[400],
+            background: Colors.white,
+          ),
         ),
-        home: const HomePage(), // Use the correct widget
-      ),
+        home: const LoginPage(),
+      ), // Removed the misplaced semicolon here.
     );
   }
 }
