@@ -1,75 +1,90 @@
 import 'package:flutter/material.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:bali_heritage/Bookmarks/models/bookmark_models.dart'; // Import model Bookmark
+import 'package:bali_heritage/Bookmarks/widgets/bookmark_card.dart'; // Import widget BookmarkCard
 
-class Bookmarks extends StatelessWidget {
+class BookmarkPage extends StatefulWidget {
+  const BookmarkPage({super.key});
+
+  @override
+  State<BookmarkPage> createState() => _BookmarkPageState();
+}
+
+class _BookmarkPageState extends State<BookmarkPage> {
+  List<Bookmark> dummyBookmarks = [
+    Bookmark(
+      model: 'bookmark',
+      pk: 1,
+      fields: Fields(
+        user: 101,
+        product: 1001,
+        notes: 'This is a great product for wellness.',
+        createdAt: DateTime.now().subtract(Duration(days: 2)),
+      ),
+    ),
+    Bookmark(
+      model: 'bookmark',
+      pk: 2,
+      fields: Fields(
+        user: 102,
+        product: 1002,
+        notes: 'Highly recommended for relaxation.',
+        createdAt: DateTime.now().subtract(Duration(days: 5)),
+      ),
+    ),
+    Bookmark(
+      model: 'bookmark',
+      pk: 3,
+      fields: Fields(
+        user: 103,
+        product: 1003,
+        notes: 'Love the soothing aroma! gokil',
+        createdAt: DateTime.now().subtract(Duration(days: 10)),
+      ),
+    ),
+  ];
+
+  // Fungsi untuk mengambil data dummy
+  Future<List<Bookmark>> fetchBookmarks() async {
+    await Future.delayed(const Duration(seconds: 2)); // Simulasi delay
+    return dummyBookmarks; // Mengembalikan data dummy
+  }
+
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
-        title: Text("Bookmarks"),
-        centerTitle: true,
+        title: const Text('Bookmark Product List'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // Header
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+      body: FutureBuilder(
+        future: fetchBookmarks(),
+        builder: (context, AsyncSnapshot snapshot) {
+          if (snapshot.data == null) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            if (!snapshot.hasData) {
+              return const Column(
                 children: [
                   Text(
-                    "user's Bookmarks", 
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    'Belum ada bookmark produk.',
+                    style: TextStyle(fontSize: 20, color: Color(0xff59A5D8)),
                   ),
+                  SizedBox(height: 8),
                 ],
-              ),
-            ),
-
-            // List of Bookmarks
-            Expanded(
-              child: GridView.builder(
-                itemCount: 4,  // Placeholder jumlah bookmark
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                ),
-                itemBuilder: (context, index) {
-                  return Card(
-                    elevation: 5,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Image.network(
-                          "https://via.placeholder.com/150", // Gambar placeholder untuk nantinya
-                          height: 100,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            "Bookmark ${index + 1}", // Nama bookmark bookmarks
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            "Untuk deskripsi bookmarks.", // Deskripsi bookmark
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
+              );
+            } else {
+              return ListView.builder(
+                itemCount: snapshot.data!.length,
+                itemBuilder: (_, index) {
+                  final bookmark = snapshot.data![index];
+                  return BookmarkCard(bookmark: bookmark); // Menggunakan BookmarkCard untuk setiap item
                 },
-              ),
-            ),
-          ],
-        ),
+              );
+            }
+          }
+        },
       ),
     );
   }
