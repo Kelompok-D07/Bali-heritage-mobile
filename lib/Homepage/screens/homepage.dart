@@ -1,9 +1,14 @@
-import 'package:bali_heritage/widgets/left_drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:bali_heritage/widgets/left_drawer.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,6 +59,27 @@ class HomePage extends StatelessWidget {
                   ),
                   child: const Text(
                     'Explore More',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    // Navigate to the Add Product page
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.green,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 40,
+                      vertical: 20,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Add Product',
                     style: TextStyle(fontSize: 18),
                   ),
                 ),
