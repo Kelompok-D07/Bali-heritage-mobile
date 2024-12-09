@@ -1,9 +1,11 @@
+import 'package:bali_heritage/Baliloka_stories/screens/stories_page.dart';
+import 'package:bali_heritage/Bookmarks/screens/bookmarks.dart';
 import 'package:bali_heritage/Forum/forum_create_page.dart';
 import 'package:bali_heritage/authentication/login.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-
+import 'package:bali_heritage/Homepage/homepage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -34,7 +36,7 @@ class MyApp extends StatelessWidget {
             background: Colors.white,
           ),
         ),
-        home: const LoginPage(),
+        home: const HomePage(),
       ), // Removed the misplaced semicolon here.
     );
   }

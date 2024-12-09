@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http; 
 import 'dart:convert';
 
-import 'package:bali_heritage/homepage/homepage.dart';
+import 'package:bali_heritage/Homepage/screens/homepage.dart';
 import 'package:bali_heritage/authentication/login.dart'; 
 
 class LeftDrawer extends StatelessWidget {
