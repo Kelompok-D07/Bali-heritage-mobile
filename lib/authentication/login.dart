@@ -1,20 +1,19 @@
-import 'dart:convert';
+import 'package:bali_heritage/Homepage/homepage.dart';
 import 'package:flutter/material.dart';
-import 'package:bali_heritage/authentication/login.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:bali_heritage/authentication/register.dart';
 
-class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +21,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Register'),
+        title: const Text('Login'),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -35,9 +34,10 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text(
-                    'Create Account',
+                    'Welcome Back!',
                     style: TextStyle(
                       fontSize: 24.0,
                       fontWeight: FontWeight.bold,
@@ -65,46 +65,43 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     obscureText: true,
                   ),
-                  const SizedBox(height: 12.0),
-                  TextField(
-                    controller: _confirmPasswordController,
-                    decoration: const InputDecoration(
-                      labelText: 'Confirm Password',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
-                      ),
-                    ),
-                    obscureText: true,
-                  ),
                   const SizedBox(height: 24.0),
                   ElevatedButton(
                     onPressed: () async {
                       String username = _usernameController.text;
-                      String password1 = _passwordController.text;
-                      String password2 = _confirmPasswordController.text;
+                      String password = _passwordController.text;
 
-                      final response = await request.postJson(
-                        "http://localhost:8000/auth/register/",
-                        jsonEncode({
-                          "username": username,
-                          "password1": password1,
-                          "password2": password2,
-                        }),
-                      );
+                      final response = await request
+                          .login("http://localhost:8000/auth/login/", {
+                        'username': username,
+                        'password': password,
+                      });
 
-                      if (response['status'] == 'success') {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Successfully registered!')),
-                        );
+                      if (request.loggedIn) {
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => const LoginPage()),
+                          MaterialPageRoute(builder: (context) => HomePage()),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("Welcome, ${response['username']}!"),
+                          ),
                         );
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(response['message'])),
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('Login Failed'),
+                            content: Text(response['message']),
+                            actions: [
+                              TextButton(
+                                child: const Text('OK'),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          ),
                         );
                       }
                     },
@@ -112,7 +109,21 @@ class _RegisterPageState extends State<RegisterPage> {
                       backgroundColor: Colors.orange,
                       foregroundColor: Colors.white,
                     ),
-                    child: const Text('Register'),
+                    child: const Text('Login'),
+                  ),
+                  const SizedBox(height: 24.0),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const RegisterPage()),
+                      );
+                    },
+                    child: const Text(
+                      'Don\'t have an account? Register',
+                      style: TextStyle(color: Colors.orange),
+                    ),
                   ),
                 ],
               ),
