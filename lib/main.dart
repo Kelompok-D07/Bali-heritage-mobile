@@ -1,3 +1,4 @@
+import 'package:bali_heritage/Forum/forum_create_page.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,10 @@ class MyApp extends StatelessWidget {
         return request;
       },
       child: MaterialApp(
+        routes: {
+    
+          '/create_post': (context) => const ForumCreatePage(),
+        },
         title: 'Bali Heritage',
         theme: ThemeData(
           useMaterial3: true,
