@@ -1,3 +1,4 @@
+import 'package:bali_heritage/Homepage/screens/productentry_from.dart';
 import 'package:flutter/material.dart';
 import 'package:bali_heritage/widgets/left_drawer.dart';
 
@@ -65,7 +66,12 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
-                    // Navigate to the Add Product page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ProductEntryFormPage(),
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
