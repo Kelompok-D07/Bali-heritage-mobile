@@ -32,13 +32,17 @@
             android:value="2" />
     </application>
 
+<<<<<<< HEAD
+    <uses-permission name="android.permission.INTERNET" />
+=======
     <!-- Required to fetch data from the Internet. -->
     <uses-permission android:name="android.permission.INTERNET" />
     
+>>>>>>> 8621f1fc44b9f16b62b5745a0e318d32256e9cdb
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
          https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
-
+    
          In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
 
     <!-- Required to fetch data from the Internet. -->
