@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
- // Import model Bookmark
+// Import model yang dibutuhkan
 import 'package:bali_heritage/Bookmarks/models/bookmark_models.dart';
 
 class BookmarkCard extends StatelessWidget {
