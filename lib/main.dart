@@ -1,3 +1,4 @@
+import 'package:bali_heritage/Baliloka_stories/screens/stories_page.dart';
 import 'package:bali_heritage/authentication/login.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
             background: Colors.white,
           ),
         ),
-        home: const LoginPage(),
+        home: const StoriesPage(),
       ), // Removed the misplaced semicolon here.
     );
   }
