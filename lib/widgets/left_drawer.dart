@@ -5,6 +5,7 @@ import 'dart:convert';
 
 import 'package:bali_heritage/Homepage/screens/homepage.dart';
 import 'package:bali_heritage/authentication/login.dart';  // Import ProductListPage
+import 'package:bali_heritage/Homepage/screens/productentry_from.dart'; //
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -84,6 +85,16 @@ class LeftDrawer extends StatelessWidget {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => const ProductListPage()),
+              );
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.add_box, color: Theme.of(context).colorScheme.primary),
+            title: const Text('Add Product'),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const ProductEntryFormPage()),
               );
             },
           ),

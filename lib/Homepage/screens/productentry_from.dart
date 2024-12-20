@@ -1,11 +1,12 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:bali_heritage/Homepage/models/Category.dart';
 import 'package:bali_heritage/Homepage/models/Restaurant.dart';
-import 'package:flutter/material.dart';
 import 'package:bali_heritage/widgets/left_drawer.dart';
 import 'package:bali_heritage/Homepage/screens/homepage.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 class ProductEntryFormPage extends StatefulWidget {
   const ProductEntryFormPage({super.key});
@@ -35,28 +36,6 @@ class _ProductEntryFormPageState extends State<ProductEntryFormPage> {
     super.initState();
     _fetchCategories();
     _fetchRestaurants();
-  }
-
-  Future<void> _fetchCategories() async {
-    final request = context.read<CookieRequest>();
-    final response = await request.get("http://localhost:8000/get-categories/");
-    if (response['status'] == 'success') {
-      setState(() {
-        _categories = List<Category>.from(
-            response['categories'].map((x) => Category.fromJson(x)));
-      });
-    }
-  }
-
-  Future<void> _fetchRestaurants() async {
-    final request = context.read<CookieRequest>();
-    final response = await request.get("http://localhost:8000/get-restaurants/");
-    if (response['status'] == 'success') {
-      setState(() {
-        _restaurants = List<Restaurant>.from(
-            response['restaurants'].map((x) => Restaurant.fromJson(x)));
-      });
-    }
   }
 
   @override
@@ -179,7 +158,7 @@ class _ProductEntryFormPageState extends State<ProductEntryFormPage> {
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         final response = await request.postJson(
-                          "http://localhost:8000/create-product/",
+                          "http://localhost:8000/create_product_flutter/",
                           jsonEncode({
                             "name": _productName,
                             "description": _productDescription,
@@ -253,5 +232,31 @@ class _ProductEntryFormPageState extends State<ProductEntryFormPage> {
         },
       ),
     );
+  }
+
+  Future<void> _fetchCategories() async {
+    final response = await http.get(Uri.parse('http://localhost:8000/get-categories/'));
+    if (response.statusCode == 200) {
+      final List<Category> categories = categoryFromJson(response.body);
+      setState(() {
+        _categories = categories;
+      });
+    } else {
+      // Handle error
+      print('Failed to load categories');
+    }
+  }
+
+  Future<void> _fetchRestaurants() async {
+    final response = await http.get(Uri.parse('http://localhost:8000/get-restaurants/'));
+    if (response.statusCode == 200) {
+      final List<Restaurant> restaurants = restaurantFromJson(response.body);
+      setState(() {
+        _restaurants = restaurants;
+      });
+    } else {
+      // Handle error
+      print('Failed to load restaurants');
+    }
   }
 }
