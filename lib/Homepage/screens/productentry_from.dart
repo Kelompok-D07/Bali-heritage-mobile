@@ -21,7 +21,7 @@ class _ProductEntryFormPageState extends State<ProductEntryFormPage> {
   String _productName = '';
   String _productDescription = '';
   String _productPrice = '';
-  String _productImage = '';
+  String _productImageUrl = '';  // Image URL field
   String _productCategory = '';
   String _restaurantName = '';
 
@@ -78,12 +78,24 @@ class _ProductEntryFormPageState extends State<ProductEntryFormPage> {
                 inputType: TextInputType.number,
                 onChanged: (value) => _productPrice = value,
               ),
+              // Product Image URL input
               _buildTextField(
                 context,
                 label: "Product Image URL",
-                hint: "Enter product image URL",
-                onChanged: (value) => _productImage = value,
+                hint: "Enter image URL",
+                onChanged: (value) => _productImageUrl = value,
               ),
+              // Display the image from URL if provided
+              if (_productImageUrl.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Image.network(
+                    _productImageUrl,
+                    height: 200, // You can adjust the height of the image
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               // Category Dropdown
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -158,12 +170,12 @@ class _ProductEntryFormPageState extends State<ProductEntryFormPage> {
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         final response = await request.postJson(
-                          "http://localhost:8000/create_product_flutter/",
+                          "http://localhost:8000/create-product-flutter/",
                           jsonEncode({
                             "name": _productName,
                             "description": _productDescription,
                             "price": _productPrice,
-                            "image": _productImage,
+                            "image": _productImageUrl,  // Send the image URL
                             "category": _productCategory,
                             "restaurant_name": _restaurantName,
                           }),
@@ -242,7 +254,6 @@ class _ProductEntryFormPageState extends State<ProductEntryFormPage> {
         _categories = categories;
       });
     } else {
-      // Handle error
       print('Failed to load categories');
     }
   }
@@ -255,7 +266,6 @@ class _ProductEntryFormPageState extends State<ProductEntryFormPage> {
         _restaurants = restaurants;
       });
     } else {
-      // Handle error
       print('Failed to load restaurants');
     }
   }
