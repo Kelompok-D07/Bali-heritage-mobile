@@ -5,6 +5,7 @@ import 'dart:convert';
 
 import 'package:bali_heritage/Homepage/screens/homepage.dart';
 import 'package:bali_heritage/authentication/login.dart';  // Import ProductListPage
+import 'package:bali_heritage/Homepage/screens/productentry_from.dart'; //
 import 'package:bali_heritage/Review/screens/reviewentry_form.dart';  // Import Review Form
 
 class LeftDrawer extends StatelessWidget {
@@ -24,7 +25,7 @@ class LeftDrawer extends StatelessWidget {
           );
 
           // Navigate to LoginPage
-          Navigator.pushReplacement(
+          Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const LoginPage()),
           );
@@ -72,7 +73,7 @@ class LeftDrawer extends StatelessWidget {
             leading: Icon(Icons.home, color: Theme.of(context).colorScheme.primary),
             title: const Text('Home'),
             onTap: () {
-              Navigator.pushReplacement(
+              Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const HomePage()),
               );
@@ -82,9 +83,19 @@ class LeftDrawer extends StatelessWidget {
             leading: Icon(Icons.list, color: Theme.of(context).colorScheme.primary),
             title: const Text('Product List'),
             onTap: () {
-              Navigator.pushReplacement(
+              Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const ProductListPage()),
+              );
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.add_box, color: Theme.of(context).colorScheme.primary),
+            title: const Text('Add Product'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProductEntryFormPage()),
               );
             },
           ),
@@ -92,7 +103,7 @@ class LeftDrawer extends StatelessWidget {
             leading: Icon(Icons.rate_review, color: Theme.of(context).colorScheme.primary),
             title: const Text('Add Your Review'),
             onTap: () {
-              Navigator.pushReplacement(
+              Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const ReviewEntryFormPage()),
               );
