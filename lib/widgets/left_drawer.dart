@@ -122,7 +122,7 @@ class LeftDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.list, color: Theme.of(context).colorScheme.primary),
+            leading: Icon(Icons.bookmark, color: Theme.of(context).colorScheme.primary),
             title: const Text('Bookmarks'),
             onTap: () {
               Navigator.push(
