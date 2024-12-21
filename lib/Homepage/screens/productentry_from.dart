@@ -1,11 +1,12 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:bali_heritage/Homepage/models/Category.dart';
 import 'package:bali_heritage/Homepage/models/Restaurant.dart';
-import 'package:flutter/material.dart';
 import 'package:bali_heritage/widgets/left_drawer.dart';
 import 'package:bali_heritage/Homepage/screens/homepage.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 class ProductEntryFormPage extends StatefulWidget {
   const ProductEntryFormPage({super.key});
@@ -20,7 +21,7 @@ class _ProductEntryFormPageState extends State<ProductEntryFormPage> {
   String _productName = '';
   String _productDescription = '';
   String _productPrice = '';
-  String _productImage = '';
+  String _productImageUrl = '';  // Image URL field
   String _productCategory = '';
   String _restaurantName = '';
 
@@ -35,28 +36,6 @@ class _ProductEntryFormPageState extends State<ProductEntryFormPage> {
     super.initState();
     _fetchCategories();
     _fetchRestaurants();
-  }
-
-  Future<void> _fetchCategories() async {
-    final request = context.read<CookieRequest>();
-    final response = await request.get("http://localhost:8000/get-categories/");
-    if (response['status'] == 'success') {
-      setState(() {
-        _categories = List<Category>.from(
-            response['categories'].map((x) => Category.fromJson(x)));
-      });
-    }
-  }
-
-  Future<void> _fetchRestaurants() async {
-    final request = context.read<CookieRequest>();
-    final response = await request.get("http://localhost:8000/get-restaurants/");
-    if (response['status'] == 'success') {
-      setState(() {
-        _restaurants = List<Restaurant>.from(
-            response['restaurants'].map((x) => Restaurant.fromJson(x)));
-      });
-    }
   }
 
   @override
@@ -99,12 +78,24 @@ class _ProductEntryFormPageState extends State<ProductEntryFormPage> {
                 inputType: TextInputType.number,
                 onChanged: (value) => _productPrice = value,
               ),
+              // Product Image URL input
               _buildTextField(
                 context,
                 label: "Product Image URL",
-                hint: "Enter product image URL",
-                onChanged: (value) => _productImage = value,
+                hint: "Enter image URL",
+                onChanged: (value) => _productImageUrl = value,
               ),
+              // Display the image from URL if provided
+              if (_productImageUrl.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Image.network(
+                    _productImageUrl,
+                    height: 200, // You can adjust the height of the image
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               // Category Dropdown
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -179,12 +170,12 @@ class _ProductEntryFormPageState extends State<ProductEntryFormPage> {
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         final response = await request.postJson(
-                          "http://localhost:8000/create-product/",
+                          "http://localhost:8000/create-product-flutter/",
                           jsonEncode({
                             "name": _productName,
                             "description": _productDescription,
                             "price": _productPrice,
-                            "image": _productImage,
+                            "image": _productImageUrl,  // Send the image URL
                             "category": _productCategory,
                             "restaurant_name": _restaurantName,
                           }),
@@ -253,5 +244,29 @@ class _ProductEntryFormPageState extends State<ProductEntryFormPage> {
         },
       ),
     );
+  }
+
+  Future<void> _fetchCategories() async {
+    final response = await http.get(Uri.parse('http://localhost:8000/get-categories/'));
+    if (response.statusCode == 200) {
+      final List<Category> categories = categoryFromJson(response.body);
+      setState(() {
+        _categories = categories;
+      });
+    } else {
+      print('Failed to load categories');
+    }
+  }
+
+  Future<void> _fetchRestaurants() async {
+    final response = await http.get(Uri.parse('http://localhost:8000/get-restaurants/'));
+    if (response.statusCode == 200) {
+      final List<Restaurant> restaurants = restaurantFromJson(response.body);
+      setState(() {
+        _restaurants = restaurants;
+      });
+    } else {
+      print('Failed to load restaurants');
+    }
   }
 }
