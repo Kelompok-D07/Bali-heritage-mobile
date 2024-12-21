@@ -1,3 +1,4 @@
+import 'package:bali_heritage/widgets/left_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +30,10 @@ class _BookmarkPageState extends State<BookmarkPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Bookmark Product List'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Colors.white,
       ),
+      drawer: const LeftDrawer(),
       body: FutureBuilder(
         future: fetchBookmarks(request),
         builder: (context, AsyncSnapshot snapshot) {
