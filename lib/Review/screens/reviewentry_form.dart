@@ -93,7 +93,7 @@ class _ReviewEntryFormPageState extends State<ReviewEntryFormPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                   decoration: InputDecoration(
-                    hintText: "Rating",
+                    hintText: "Berikan Rating 1-5 Untuk Toko Ini!",
                     labelText: "Rating",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5.0),
