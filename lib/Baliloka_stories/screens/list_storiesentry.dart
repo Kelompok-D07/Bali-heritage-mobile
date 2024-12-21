@@ -13,7 +13,7 @@ class StoriesEntryPage extends StatefulWidget {
 
 class _StoriesEntryPageState extends State<StoriesEntryPage> {
   Future<List<StoriesEntry>> fetchStories(CookieRequest request) async {
-    final response = await request.get('http://127.0.0.1:8000/json/');
+    final response = await request.get('http://127.0.0.1:8000/stories/json/');
     
     // Melakukan decode response menjadi bentuk json
     var data = response;

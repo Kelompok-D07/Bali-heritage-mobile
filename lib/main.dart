@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
             background: Colors.white,
           ),
         ),
-        home: const LoginPage(),
+        home: const StoriesPage(),
       ), // Removed the misplaced semicolon here.
     );
   }
