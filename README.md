@@ -22,11 +22,8 @@ Bali Heritage bukan hanya sekadar platform untuk mencari suvenir khas, tetapi ju
 | BaliLoka Stories  (Muhammad Adiansyah)     | Memberikan cerita dan sejarah-sejarah terkait beberapa benda unik dari Bali.               |
 
 ## Peran/Aktor Pengguna Aplikasi
-- **Admin**
-
-  Bisa menambah, mengedit dan mendelete isi dari `homepage` serta bisa menambah, mengedit dan mendelete artikel untuk `BaliLoka Stories`
 - **User**
-
+  Bisa menambah dan mendelete isi dari `homepage` serta bisa menambah, mengedit dan mendelete artikel untuk `BaliLoka Stories`
   Bisa menggunakan fitur fitur pada aplikasi seperti forum, mereview dan memberi ulasan tempat dan lokasi yang pernah dikunjungi serta menggunakan fitur bookmark untuk menyimpan tempat favorit mereka
 
 ## Alur pengintegrasian dengan web service
