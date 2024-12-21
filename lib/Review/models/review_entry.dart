@@ -33,7 +33,7 @@ class Review {
 }
 
 class Fields {
-    int user;
+    String user;
     int rating;
     String comment;
     DateTime time;

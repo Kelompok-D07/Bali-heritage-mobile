@@ -1,75 +1,69 @@
+import 'package:bali_heritage/widgets/left_drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:bali_heritage/Bookmarks/models/bookmark_models.dart'; // Import model Bookmark
+import 'package:bali_heritage/Bookmarks/widgets/bookmark_card.dart'; // Import widget BookmarkCard
 
-class Bookmarks extends StatelessWidget {
+class BookmarkPage extends StatefulWidget {
+  const BookmarkPage({super.key});
+
+  @override
+  State<BookmarkPage> createState() => _BookmarkPageState();
+}
+
+class _BookmarkPageState extends State<BookmarkPage> {
+  Future<List<Bookmark>> fetchBookmarks(CookieRequest request) async {
+    final response = await request.get('http://localhost:8000/bookmarks/json/');
+    List<Bookmark> listBookmark = [];
+    for (var d in response) {
+      if (d != null) {
+        listBookmark.add(Bookmark.fromJson(d));
+      }
+    }
+    return listBookmark;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final request = context.read<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
-        title: Text("Bookmarks"),
-        centerTitle: true,
+        title: const Text('Bookmark Product List'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Colors.white,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // Header
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "user's Bookmarks", 
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                ],
+      drawer: const LeftDrawer(),
+      body: FutureBuilder(
+        future: fetchBookmarks(request),
+        builder: (context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (!snapshot.hasData || snapshot.data.isEmpty) {
+            return const Center(
+              child: Text(
+                'Belum ada bookmark produk.',
+                style: TextStyle(fontSize: 20, color: Color(0xff59A5D8)),
               ),
-            ),
-
-            // List of Bookmarks
-            Expanded(
-              child: GridView.builder(
-                itemCount: 4,  // Placeholder jumlah bookmark
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                ),
-                itemBuilder: (context, index) {
-                  return Card(
-                    elevation: 5,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Image.network(
-                          "https://via.placeholder.com/150", // Gambar placeholder untuk nantinya
-                          height: 100,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            "Bookmark ${index + 1}", // Nama bookmark bookmarks
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            "Untuk deskripsi bookmarks.", // Deskripsi bookmark
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
+            );
+          } else {
+            final bookmarks = snapshot.data!;
+            return ListView.builder(
+              itemCount: bookmarks.length,
+              itemBuilder: (_, index) {
+                final bookmark = bookmarks[index];
+                return BookmarkCard(
+                  bookmark: bookmark,
+                  onDelete: () {
+                    setState(() {
+                      bookmarks.removeAt(index); // Menghapus item dari UI
+                    });
+                  },
+                );
+              },
+            );
+          }
+        },
       ),
     );
   }

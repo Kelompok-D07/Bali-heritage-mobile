@@ -33,29 +33,41 @@ class Bookmark {
 }
 
 class Fields {
-    int user;
-    int product;
+    String user;
+    int userId;
+    String product;
+    int productId;
+    String image;
     String notes;
-    DateTime createdAt;
+    String description;
 
     Fields({
         required this.user,
+        required this.userId,
         required this.product,
+        required this.productId,
+        required this.image,
         required this.notes,
-        required this.createdAt,
+        required this.description,
     });
 
     factory Fields.fromJson(Map<String, dynamic> json) => Fields(
         user: json["user"],
+        userId: json["user_id"],
         product: json["product"],
+        productId: json["product_id"],
+        image: json["image"],
         notes: json["notes"],
-        createdAt: DateTime.parse(json["created_at"]),
+        description: json["description"],
     );
 
     Map<String, dynamic> toJson() => {
         "user": user,
+        "user_id": userId,
         "product": product,
+        "product_id": productId,
+        "image": image,
         "notes": notes,
-        "created_at": createdAt.toIso8601String(),
+        "description": description,
     };
 }
