@@ -1,3 +1,4 @@
+import 'package:bali_heritage/Homepage/screens/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -87,85 +88,9 @@ class _ProductListPageState extends State<ProductListPage> {
               itemCount: products.length,
               itemBuilder: (context, index) {
                 final product = products[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Product Image
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.network(
-                            product.fields.image,
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) => const Icon(
-                              Icons.image,
-                              size: 100,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        // Product Details
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                product.fields.name,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                product.fields.description,
-                                maxLines: 3,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(color: Colors.grey),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Price: \$${product.fields.price}',
-                                style: const TextStyle(
-                                  color: Colors.orange,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              // Bookmark Button
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: ElevatedButton(
-                                  onPressed: () => toggleBookmark(product.pk),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: product.fields.category == 1
-                                        ? Colors.orange
-                                        : Colors.grey, // Simulating bookmarked state
-                                  ),
-                                  child: Text(
-                                    product.fields.category == 1
-                                        ? 'Remove Bookmark'
-                                        : 'Add to Bookmark',
-                                    style: const TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                return ProductCard(
+                  product: product,
+                  onToggleBookmark: () => toggleBookmark(product.pk),
                 );
               },
             );
