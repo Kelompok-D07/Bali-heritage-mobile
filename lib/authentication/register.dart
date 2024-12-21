@@ -15,7 +15,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  bool _isAdmin = false; // Track if the user wants to be an admin
 
   @override
   Widget build(BuildContext context) {
@@ -77,21 +76,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     obscureText: true,
                   ),
-                  const SizedBox(height: 12.0),
-                  // Checkbox for isAdmin field
-                  Row(
-                    children: [
-                      Checkbox(
-                        value: _isAdmin,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            _isAdmin = value ?? false;
-                          });
-                        },
-                      ),
-                      const Text('Register as Admin'),
-                    ],
-                  ),
                   const SizedBox(height: 24.0),
                   ElevatedButton(
                     onPressed: () async {
@@ -105,7 +89,6 @@ class _RegisterPageState extends State<RegisterPage> {
                           "username": username,
                           "password1": password1,
                           "password2": password2,
-                          "isadmin": _isAdmin,  // Include the isadmin field
                         }),
                       );
 
