@@ -41,6 +41,36 @@ class _ProductListPageState extends State<ProductListPage> {
     return listProduct;
   }
 
+  Future<void> deleteProduct(CookieRequest request, int productId) async {
+  try {
+    final response = await http.post(
+      Uri.parse('http://localhost:8000/delete-product-flutter/'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'id': productId}),
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        _products = fetchProducts(request, selectedCategory); // Refresh product list
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Product deleted successfully.'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to delete product.')),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('An error occurred. Please try again.')),
+    );
+  }
+}
+
   Future<List<Category>> fetchCategories() async {
     final response = await http.get(Uri.parse('http://localhost:8000/get-categories/')); // Update URL as needed
     if (response.statusCode == 200) {
@@ -158,6 +188,7 @@ class _ProductListPageState extends State<ProductListPage> {
                       return ProductCard(
                         product: product,
                         onToggleBookmark: () => toggleBookmark(request, product.fields.name),
+                        onDelete: () => deleteProduct(request, product.pk), 
                       );
                     },
                   );
