@@ -94,7 +94,7 @@ class ProductCard extends StatelessWidget {
                       ElevatedButton(
                         onPressed: onToggleBookmark,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: product.fields.category == 1
+                          backgroundColor: product.fields.bookmarked == true
                               ? Colors.orange
                               : Colors.grey,
                           shape: RoundedRectangleBorder(
@@ -102,7 +102,7 @@ class ProductCard extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          product.fields.category == 1
+                          product.fields.bookmarked == true
                               ? 'Remove Bookmark'
                               : 'Add to Bookmark',
                           style: const TextStyle(color: Colors.white),

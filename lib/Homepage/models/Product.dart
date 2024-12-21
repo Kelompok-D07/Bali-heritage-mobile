@@ -39,6 +39,7 @@ class Fields {
     String image;
     int category;
     String restaurantName;
+    bool bookmarked;
 
     Fields({
         required this.name,
@@ -47,6 +48,7 @@ class Fields {
         required this.image,
         required this.category,
         required this.restaurantName,
+        required this.bookmarked,
     });
 
     factory Fields.fromJson(Map<String, dynamic> json) => Fields(
@@ -56,6 +58,7 @@ class Fields {
         image: json["image"],
         category: json["category"],
         restaurantName: json["restaurant_name"],
+        bookmarked: json["bookmarked"] ?? false,
     );
 
     Map<String, dynamic> toJson() => {
@@ -65,5 +68,6 @@ class Fields {
         "image": image,
         "category": category,
         "restaurant_name": restaurantName,
+        "bookmarked": bookmarked,
     };
 }
