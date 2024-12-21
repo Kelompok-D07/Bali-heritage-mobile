@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bali_heritage/Homepage/models/Product.dart';
+import 'package:bali_heritage/Homepage/screens/restaurant_page.dart'; // Import your Restaurant Page
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -17,10 +18,13 @@ class ProductCard extends StatelessWidget {
       padding: const EdgeInsets.all(12.0),
       child: InkWell(
         onTap: () {
+          // Navigate to the RestaurantPage with the restaurant name from the product
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ProductDetailPage(productId: product.pk),
+              builder: (context) => RestaurantPage(
+                restaurantName: product.fields.restaurantName, // Make sure this is the correct field
+              ),
             ),
           );
         },
@@ -111,24 +115,6 @@ class ProductCard extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class ProductDetailPage extends StatelessWidget {
-  final int productId;
-
-  const ProductDetailPage({super.key, required this.productId});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Product Details'),
-      ),
-      body: Center(
-        child: Text('Product ID: $productId'),
       ),
     );
   }
