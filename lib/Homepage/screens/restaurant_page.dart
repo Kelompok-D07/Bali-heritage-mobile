@@ -55,7 +55,7 @@ class _RestaurantPageState extends State<RestaurantPage> {
       appBar: AppBar(
         backgroundColor: Colors.orangeAccent,
         title: const Text(
-          'Restaurant Details',
+          'Store Details',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
