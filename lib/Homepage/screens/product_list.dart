@@ -97,26 +97,33 @@ class _ProductListPageState extends State<ProductListPage> {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else if (snapshot.hasData) {
                 final categories = snapshot.data!;
-                return DropdownButton<String>(
-                  value: selectedCategory,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      selectedCategory = newValue!;
-                      _products = fetchProducts(selectedCategory); // Fetch filtered products
-                    });
-                  },
-                  items: [
-                    DropdownMenuItem(
-                      value: 'ALL',
-                      child: Text('All Categories'),
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: DropdownButtonFormField<String>(
+                    decoration: const InputDecoration(
+                      labelText: 'Pilih Kategori', // Change the label text as needed
+                      border: OutlineInputBorder(),
                     ),
-                    ...categories.map<DropdownMenuItem<String>>((category) {
-                      return DropdownMenuItem<String>(
-                        value: category.pk.toString(),
-                        child: Text(category.fields.name),
-                      );
-                    }).toList(),
-                  ],
+                    value: selectedCategory,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedCategory = newValue!;
+                        _products = fetchProducts(selectedCategory); // Fetch filtered products
+                      });
+                    },
+                    items: [
+                      const DropdownMenuItem(
+                        value: 'ALL',
+                        child: Text('All Categories'),
+                      ),
+                      ...categories.map<DropdownMenuItem<String>>((category) {
+                        return DropdownMenuItem<String>(
+                          value: category.pk.toString(),
+                          child: Text(category.fields.name),
+                        );
+                      }).toList(),
+                    ],
+                  ),
                 );
               } else {
                 return const Center(child: Text('No categories available.'));
