@@ -12,54 +12,15 @@ class BookmarkPage extends StatefulWidget {
 }
 
 class _BookmarkPageState extends State<BookmarkPage> {
-  // List<Bookmark> dummyBookmarks = [
-  //   Bookmark(
-  //     model: 'bookmark',
-  //     pk: 1,
-  //     fields: Fields(
-  //       user: 101,
-  //       product: 1001,
-  //       notes: 'This is a great product for wellness.',
-  //       createdAt: DateTime.now().subtract(Duration(days: 2)),
-  //     ),
-  //   ),
-  //   Bookmark(
-  //     model: 'bookmark',
-  //     pk: 2,
-  //     fields: Fields(
-  //       user: 102,
-  //       product: 1002,
-  //       notes: 'Highly recommended for relaxation.',
-  //       createdAt: DateTime.now().subtract(Duration(days: 5)),
-  //     ),
-  //   ),
-  //   Bookmark(
-  //     model: 'bookmark',
-  //     pk: 3,
-  //     fields: Fields(
-  //       user: 103,
-  //       product: 1003,
-  //       notes: 'Love the soothing aroma! gokil',
-  //       createdAt: DateTime.now().subtract(Duration(days: 10)),
-  //     ),
-  //   ),
-  // ];
-
-  // Fungsi untuk mengambil data dummy
   Future<List<Bookmark>> fetchBookmarks(CookieRequest request) async {
     final response = await request.get('http://localhost:8000/bookmarks/json/');
-    
-    // Melakukan decode response menjadi bentuk json
-    var data = response;
-    
-    // Melakukan konversi data json menjadi object product
-    List<Bookmark> listProduct = [];
-    for (var d in data) {
+    List<Bookmark> listBookmark = [];
+    for (var d in response) {
       if (d != null) {
-        listProduct.add(Bookmark.fromJson(d));
+        listBookmark.add(Bookmark.fromJson(d));
       }
     }
-    return listProduct;
+    return listBookmark;
   }
 
   @override
@@ -72,28 +33,31 @@ class _BookmarkPageState extends State<BookmarkPage> {
       body: FutureBuilder(
         future: fetchBookmarks(request),
         builder: (context, AsyncSnapshot snapshot) {
-          if (snapshot.data == null) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
+          } else if (!snapshot.hasData || snapshot.data.isEmpty) {
+            return const Center(
+              child: Text(
+                'Belum ada bookmark produk.',
+                style: TextStyle(fontSize: 20, color: Color(0xff59A5D8)),
+              ),
+            );
           } else {
-            if (!snapshot.hasData) {
-              return const Column(
-                children: [
-                  Text(
-                    'Belum ada bookmark produk.',
-                    style: TextStyle(fontSize: 20, color: Color(0xff59A5D8)),
-                  ),
-                  SizedBox(height: 8),
-                ],
-              );
-            } else {
-              return ListView.builder(
-                itemCount: snapshot.data!.length,
-                itemBuilder: (_, index) {
-                  final bookmark = snapshot.data![index];
-                  return BookmarkCard(bookmark: bookmark); // Menggunakan BookmarkCard untuk setiap item
-                },
-              );
-            }
+            final bookmarks = snapshot.data!;
+            return ListView.builder(
+              itemCount: bookmarks.length,
+              itemBuilder: (_, index) {
+                final bookmark = bookmarks[index];
+                return BookmarkCard(
+                  bookmark: bookmark,
+                  onDelete: () {
+                    setState(() {
+                      bookmarks.removeAt(index); // Menghapus item dari UI
+                    });
+                  },
+                );
+              },
+            );
           }
         },
       ),
