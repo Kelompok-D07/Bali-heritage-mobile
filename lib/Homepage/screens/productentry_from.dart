@@ -152,7 +152,7 @@ class _ProductEntryFormPageState extends State<ProductEntryFormPage> {
                   }).toList(),
                   validator: (value) {
                     if (value == null) {
-                      return 'Please select a restaurant';
+                      return 'Please select a shop';
                     }
                     return null;
                   },
