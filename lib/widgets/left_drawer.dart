@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:bali_heritage/Homepage/screens/homepage.dart';
 import 'package:bali_heritage/authentication/login.dart';  // Import ProductListPage
 import 'package:bali_heritage/Review/screens/reviewentry_form.dart';  // Import Review Form
+import 'package:bali_heritage/Review/screens/list_reviewform.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -95,6 +96,16 @@ class LeftDrawer extends StatelessWidget {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => const ReviewEntryFormPage()),
+              );
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.preview, color: Theme.of(context).colorScheme.primary),
+            title: const Text("See People's Review"),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const ReviewEntryPage()),
               );
             },
           ),
