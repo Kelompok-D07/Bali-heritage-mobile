@@ -12,54 +12,65 @@ class BookmarkPage extends StatefulWidget {
 }
 
 class _BookmarkPageState extends State<BookmarkPage> {
-  List<Bookmark> dummyBookmarks = [
-    Bookmark(
-      model: 'bookmark',
-      pk: 1,
-      fields: Fields(
-        user: 101,
-        product: 1001,
-        notes: 'This is a great product for wellness.',
-        createdAt: DateTime.now().subtract(Duration(days: 2)),
-      ),
-    ),
-    Bookmark(
-      model: 'bookmark',
-      pk: 2,
-      fields: Fields(
-        user: 102,
-        product: 1002,
-        notes: 'Highly recommended for relaxation.',
-        createdAt: DateTime.now().subtract(Duration(days: 5)),
-      ),
-    ),
-    Bookmark(
-      model: 'bookmark',
-      pk: 3,
-      fields: Fields(
-        user: 103,
-        product: 1003,
-        notes: 'Love the soothing aroma! gokil',
-        createdAt: DateTime.now().subtract(Duration(days: 10)),
-      ),
-    ),
-  ];
+  // List<Bookmark> dummyBookmarks = [
+  //   Bookmark(
+  //     model: 'bookmark',
+  //     pk: 1,
+  //     fields: Fields(
+  //       user: 101,
+  //       product: 1001,
+  //       notes: 'This is a great product for wellness.',
+  //       createdAt: DateTime.now().subtract(Duration(days: 2)),
+  //     ),
+  //   ),
+  //   Bookmark(
+  //     model: 'bookmark',
+  //     pk: 2,
+  //     fields: Fields(
+  //       user: 102,
+  //       product: 1002,
+  //       notes: 'Highly recommended for relaxation.',
+  //       createdAt: DateTime.now().subtract(Duration(days: 5)),
+  //     ),
+  //   ),
+  //   Bookmark(
+  //     model: 'bookmark',
+  //     pk: 3,
+  //     fields: Fields(
+  //       user: 103,
+  //       product: 1003,
+  //       notes: 'Love the soothing aroma! gokil',
+  //       createdAt: DateTime.now().subtract(Duration(days: 10)),
+  //     ),
+  //   ),
+  // ];
 
   // Fungsi untuk mengambil data dummy
-  Future<List<Bookmark>> fetchBookmarks() async {
-    await Future.delayed(const Duration(seconds: 2)); // Simulasi delay
-    return dummyBookmarks; // Mengembalikan data dummy
+  Future<List<Bookmark>> fetchBookmarks(CookieRequest request) async {
+    final response = await request.get('http://localhost:8000/bookmarks/json/');
+    
+    // Melakukan decode response menjadi bentuk json
+    var data = response;
+    
+    // Melakukan konversi data json menjadi object product
+    List<Bookmark> listProduct = [];
+    for (var d in data) {
+      if (d != null) {
+        listProduct.add(Bookmark.fromJson(d));
+      }
+    }
+    return listProduct;
   }
 
   @override
   Widget build(BuildContext context) {
-    final request = context.watch<CookieRequest>();
+    final request = context.read<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Bookmark Product List'),
       ),
       body: FutureBuilder(
-        future: fetchBookmarks(),
+        future: fetchBookmarks(request),
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.data == null) {
             return const Center(child: CircularProgressIndicator());

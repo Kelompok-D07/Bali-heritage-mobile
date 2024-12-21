@@ -1,3 +1,4 @@
+import 'package:bali_heritage/Bookmarks/screens/bookmarks.dart';
 import 'package:bali_heritage/Homepage/screens/product_list.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http; 
@@ -95,6 +96,16 @@ class LeftDrawer extends StatelessWidget {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => const ReviewEntryFormPage()),
+              );
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.list, color: Theme.of(context).colorScheme.primary),
+            title: const Text('Bookmarks'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const BookmarkPage()),
               );
             },
           ),
