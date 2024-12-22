@@ -170,7 +170,7 @@ class _ProductEntryFormPageState extends State<ProductEntryFormPage> {
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         final response = await request.postJson(
-                          "http://localhost:8000/create-product-flutter/",
+                          "https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/create-product-flutter/",
                           jsonEncode({
                             "name": _productName,
                             "description": _productDescription,
@@ -247,7 +247,7 @@ class _ProductEntryFormPageState extends State<ProductEntryFormPage> {
   }
 
   Future<void> _fetchCategories() async {
-    final response = await http.get(Uri.parse('http://localhost:8000/get-categories/'));
+    final response = await http.get(Uri.parse('https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/get-categories/'));
     if (response.statusCode == 200) {
       final List<Category> categories = categoryFromJson(response.body);
       setState(() {
@@ -259,7 +259,7 @@ class _ProductEntryFormPageState extends State<ProductEntryFormPage> {
   }
 
   Future<void> _fetchRestaurants() async {
-    final response = await http.get(Uri.parse('http://localhost:8000/get-restaurants/'));
+    final response = await http.get(Uri.parse('https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/get-restaurants/'));
     if (response.statusCode == 200) {
       final List<Restaurant> restaurants = restaurantFromJson(response.body);
       setState(() {

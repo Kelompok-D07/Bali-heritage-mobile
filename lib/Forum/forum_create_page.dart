@@ -25,7 +25,7 @@ class _ForumCreatePageState extends State<ForumCreatePage> {
 
   Future<void> _fetchRestaurants() async {
     final request = Provider.of<CookieRequest>(context, listen: false);
-    final url = 'http://127.0.0.1:8000/get-restaurants/';
+    final url = 'https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/get-restaurants/';
     try {
       final response = await request.get(url);
       setState(() {
@@ -51,7 +51,7 @@ class _ForumCreatePageState extends State<ForumCreatePage> {
       };
 
       final jsonData = jsonEncode(data);
-      final url = 'http://127.0.0.1:8000/forum/create_post_flutter/';
+      final url = 'https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/forum/create_post_flutter/';
       try {
         final response = await request.postJson(url, jsonData);
         if (response['success'] == true) {

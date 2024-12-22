@@ -6,7 +6,6 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:bali_heritage/Review/screens/editreview_form.dart';
-import 'dart:convert';
 
 class ReviewEntryPage extends StatefulWidget {
   const ReviewEntryPage({super.key});
@@ -45,7 +44,7 @@ class _ReviewEntryPageState extends State<ReviewEntryPage> {
 
   /// Ambil daftar restoran dari endpoint `/review/show-restaurant/`
   Future<void> _fetchRestaurants() async {
-    final url = 'http://127.0.0.1:8000/review/show-restaurant/';
+    final url = 'https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/review/show-restaurant/';
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
@@ -63,7 +62,7 @@ class _ReviewEntryPageState extends State<ReviewEntryPage> {
   Future<List<Review>> fetchReview({String? restaurantId}) async {
     // Jika ada restaurantId, sertakan query param
     final queryString = (restaurantId != null) ? '?restaurant_id=$restaurantId' : '';
-    final fullUrl = 'http://127.0.0.1:8000/review/myreview-json/$queryString';
+    final fullUrl = 'https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/review/myreview-json/$queryString';
 
     final response = await request.get(fullUrl);
     var data = response;
@@ -79,7 +78,7 @@ class _ReviewEntryPageState extends State<ReviewEntryPage> {
 
   /// Fungsi hapus review
   Future<bool> deleteReview(CookieRequest request, String pk) async {
-    final url = 'http://127.0.0.1:8000/review/delete-review-flutter/$pk/';
+    final url = 'https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/review/delete-review-flutter/$pk/';
     final response = await request.post(url, {});
 
     if (response['status'] == 'success') {

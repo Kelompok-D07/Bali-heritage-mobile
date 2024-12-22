@@ -175,7 +175,7 @@ class _EditStoriesPageState extends State<EditStoriesPage> {
 
                           final request = context.read<CookieRequest>();
                           final response = await request.postJson(
-                            'http://127.0.0.1:8000/stories/edit-flutter/${widget.story.id}/',
+                            'https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/stories/edit-flutter/${widget.story.id}/',
                             jsonEncode({
                               'name': nameController.text,
                               'image': 'data:image/png;base64,' + _imageBase64,

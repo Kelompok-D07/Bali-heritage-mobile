@@ -139,7 +139,7 @@ class _BookmarkCardState extends State<BookmarkCard> {
                                           // Simpan dan close dialog
                                           _updateNotes(_notesController.text);
                                           final response = await request.postJson(
-                                            "http://localhost:8000/bookmarks/edit-notes/",
+                                            "https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/bookmarks/edit-notes/",
                                             jsonEncode(<String, String>{
                                               'item_name': widget.bookmark.fields.product,
                                               'new_notes': _notesController.text,
@@ -205,7 +205,7 @@ class _BookmarkCardState extends State<BookmarkCard> {
                                         onPressed: () async {
                                           // Kirim permintaan untuk menghapus item
                                           final response = await request.postJson(
-                                            "http://localhost:8000/bookmarks/delete-bookmarks-flutter/${widget.bookmark.fields.product}/",
+                                            "https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/bookmarks/delete-bookmarks-flutter/${widget.bookmark.fields.product}/",
                                             jsonEncode(<String, String>{}),
                                           );
 

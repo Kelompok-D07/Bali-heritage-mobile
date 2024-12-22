@@ -35,7 +35,7 @@ class _EditReviewPageState extends State<EditReviewPage> {
     String comment,
     String rating,
   ) async {
-    final url = 'http://127.0.0.1:8000/review/edit-review-flutter/$pk/';
+    final url = 'https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/review/edit-review-flutter/$pk/';
 
     final response = await request.post(url, {
       'comment': comment,

@@ -13,7 +13,7 @@ import 'package:http/http.dart' as http;
 Future<void> sendImage() async {
   try {
     var response = await http.post(
-      Uri.parse('http://127.0.0.1:8000/stories/create-flutter/'),
+      Uri.parse('https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/stories/create-flutter/'),
       headers: {
         'Content-Type': 'application/json', // Pastikan ini ditambahkan
       },
@@ -34,7 +34,7 @@ Future<void> sendImage() async {
 Future<void> sendPostRequest(String name, String image, String description) async {
   try {
     // URL endpoint Django
-    final url = Uri.parse("http://127.0.0.1:8000/stories/create-flutter/");
+    final url = Uri.parse("https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/stories/create-flutter/");
 
     // Mengirim permintaan POST
     final response = await http.post(
@@ -224,7 +224,7 @@ class _StoriesEntryFormState extends State<StoriesEntryForm> {
                           }
 
                           final response = await request.postJson(  
-                            "http://127.0.0.1:8000/stories/create-flutter/",
+                            "https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/stories/create-flutter/",
                             jsonEncode(<String, String>{
                               'name': _name,
                               'image': 'data:image/png;base64,' + _imageBase64,

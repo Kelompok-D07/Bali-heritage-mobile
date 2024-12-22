@@ -14,7 +14,7 @@ class StoriesEntryPage extends StatefulWidget {
 
 class _StoriesEntryPageState extends State<StoriesEntryPage> {
   Future<List<StoriesEntry>> fetchStories(CookieRequest request) async {
-    final response = await request.get('http://127.0.0.1:8000/stories/json/');
+    final response = await request.get('https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/stories/json/');
 
     if (response is List) {
       return response.map((json) => StoriesEntry.fromJson(json)).toList();
@@ -95,7 +95,7 @@ class _StoriesEntryPageState extends State<StoriesEntryPage> {
   Future<void> handleDelete(CookieRequest request, StoriesEntry story) async {
     try {
       final response = await request.post(
-        'http://127.0.0.1:8000/stories/delete-flutter/${story.id}/',
+        'https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/stories/delete-flutter/${story.id}/',
         {},
       );
 

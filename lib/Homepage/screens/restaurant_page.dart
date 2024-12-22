@@ -24,7 +24,7 @@ class _RestaurantPageState extends State<RestaurantPage> {
 
   Future<RestaurantData> fetchRestaurantData(String restaurantId) async {
     final response = await http.post(
-      Uri.parse('http://localhost:8000/get-restaurant-flutter/'),
+      Uri.parse('https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/get-restaurant-flutter/'),
       body: json.encode({'restaurant_name': restaurantId}),
       headers: {'Content-Type': 'application/json'},
     );
