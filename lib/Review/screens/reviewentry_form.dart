@@ -171,7 +171,7 @@ class _ReviewEntryFormPageState extends State<ReviewEntryFormPage> {
                     // Validasi form & rating
                     if (_formKey.currentState!.validate() && _rating > 0) {
                       final response = await request.postJson(
-                        "http://localhost:8000/review/create-review-flutter/",
+                        "http://127.0.0.1:8000/review/create-review-flutter/",
                         jsonEncode(<String, String>{
                           'comment': _comment,
                           'rating': _rating.toString(),
