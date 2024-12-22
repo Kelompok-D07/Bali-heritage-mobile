@@ -1,4 +1,5 @@
 import 'package:bali_heritage/Bookmarks/screens/bookmarks.dart';
+import 'package:bali_heritage/Forum/forumpage.dart';
 import 'package:bali_heritage/Homepage/screens/product_list.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http; 
@@ -128,6 +129,17 @@ class LeftDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const BookmarkPage()),
+              );
+            },
+          ),
+
+          ListTile(
+            leading: Icon(Icons.forum, color: Theme.of(context).colorScheme.primary),
+            title: const Text('Forums'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ForumPage()),
               );
             },
           ),

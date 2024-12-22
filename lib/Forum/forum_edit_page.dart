@@ -1,10 +1,13 @@
+// lib/forum_edit_page.dart
+
 import 'package:flutter/material.dart';
-import 'forum_models.dart';
-import 'restaurant_search_page.dart';
+import 'package:provider/provider.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'dart:convert';
+import 'models/forum_models.dart';
 
 class ForumEditPage extends StatefulWidget {
-  final ForumPost post;
-
+  final Forum post;
   const ForumEditPage({Key? key, required this.post}) : super(key: key);
 
   @override
@@ -12,96 +15,87 @@ class ForumEditPage extends StatefulWidget {
 }
 
 class _ForumEditPageState extends State<ForumEditPage> {
-  late TextEditingController _titleController;
-  late TextEditingController _contentController;
-  late List<Restaurant> selectedRestaurants;
+  final _formKey = GlobalKey<FormState>();
+  late String _title;
+  late String _content;
 
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController(text: widget.post.title);
-    _contentController = TextEditingController(text: widget.post.content);
-    selectedRestaurants = List.from(widget.post.recommendations);
+    _title = widget.post.fields.title;
+    _content = widget.post.fields.content;
   }
 
-  void _update() {
-    if (_titleController.text.isEmpty || _contentController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Title and content are required')),
-      );
-      return;
+  Future<void> _submitForm() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      final request = Provider.of<CookieRequest>(context, listen: false);
+
+      // Siapkan data yang akan dikirim sebagai JSON
+      final data = {
+        'title': _title,
+        'content': _content,
+      };
+
+      final jsonData = jsonEncode(data);
+      final url = 'http://127.0.0.1:8000/forum/edit_post_flutter/${widget.post.pk}/';
+      print('Sending POST request to: $url'); // Debugging
+      print('Data: $jsonData'); // Debugging
+
+      try {
+        // Kirim permintaan POST dengan data JSON
+        final response = await request.postJson(url, jsonData);
+        print('Edit Post Response: $response'); // Debugging
+
+        if (response['success'] == true) {
+          Navigator.pop(context, true); // Kembali ke halaman forum dengan hasil sukses
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(response['error'] ?? 'Gagal mengedit post.'))
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}'))
+        );
+      }
     }
-
-    final updatedPost = ForumPost(
-      id: widget.post.id,
-      title: _titleController.text,
-      content: _contentController.text,
-      author: widget.post.author,
-      createdAt: widget.post.createdAt,
-      totalLikes: widget.post.totalLikes,
-      hasLiked: widget.post.hasLiked,
-      recommendations: selectedRestaurants,
-    );
-
-    Navigator.pop(context, updatedPost);
-  }
-
-  void _openRestaurantSearch() async {
-    final result = await Navigator.push<List<Restaurant>>(
-      context,
-      MaterialPageRoute(builder: (context) => const RestaurantSearchPage()),
-    );
-    if (result != null) {
-      setState(() {
-        selectedRestaurants = result;
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _titleController.dispose();
-    _contentController.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Edit Post'),
-      ),
+      appBar: AppBar(title: const Text("Edit Post")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _titleController,
-              decoration: const InputDecoration(labelText: 'Title'),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _contentController,
-              decoration: const InputDecoration(labelText: 'Content'),
-              maxLines: 5,
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                ElevatedButton(
-                  onPressed: _openRestaurantSearch,
-                  child: const Text('Edit Recommendations'),
-                ),
-                const SizedBox(width: 16),
-                Text('Selected: ${selectedRestaurants.length}'),
-              ],
-            ),
-            const Spacer(),
-            ElevatedButton(
-              onPressed: _update,
-              child: const Text('Update'),
-            )
-          ],
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              // Input untuk judul
+              TextFormField(
+                initialValue: _title,
+                decoration: const InputDecoration(labelText: 'Judul'),
+                onSaved: (val) => _title = val ?? '',
+                validator: (val) =>
+                    val == null || val.isEmpty ? 'Judul wajib diisi' : null,
+              ),
+              // Input untuk konten
+              TextFormField(
+                initialValue: _content,
+                decoration: const InputDecoration(labelText: 'Konten'),
+                onSaved: (val) => _content = val ?? '',
+                validator: (val) =>
+                    val == null || val.isEmpty ? 'Konten wajib diisi' : null,
+              ),
+              const SizedBox(height: 16),
+              // Tombol untuk menyimpan perubahan
+              ElevatedButton(
+                onPressed: _submitForm,
+                child: const Text('Save Changes'),
+              ),
+            ],
+          ),
         ),
       ),
     );

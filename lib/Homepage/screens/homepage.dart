@@ -1,5 +1,8 @@
+// lib/Homepage/screens/homepage.dart
+
 import 'package:bali_heritage/widgets/left_drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:bali_heritage/Forum/forumpage.dart'; // Import ForumPage
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -39,7 +42,32 @@ class HomePage extends StatelessWidget {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
-                    // Add functionality or navigation
+                    // Navigasi ke ForumPage saat tombol ditekan
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const ForumPage()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 40,
+                      vertical: 20,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Forum', // Ubah teks tombol menjadi 'Forum'
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    // Tambahkan fungsi atau navigasi lain jika diperlukan
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
