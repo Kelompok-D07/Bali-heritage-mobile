@@ -1,5 +1,7 @@
 import 'package:bali_heritage/Homepage/screens/product_card.dart';
 import 'package:flutter/material.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -22,19 +24,52 @@ class _ProductListPageState extends State<ProductListPage> {
   @override
   void initState() {
     super.initState();
-    _products = fetchProducts(selectedCategory);
-    _categories = fetchCategories();
+    // Jadinya _products dan _categories diinisialisasi dalam build biar bisa mendapatkan CookieRequest
   }
 
-  Future<List<Product>> fetchProducts(String category) async {
-    final response = await http.get(Uri.parse('http://localhost:8000/get-products-by-category/?category=$category')); // Update URL as needed
-    if (response.statusCode == 200) {
-      final List<Product> products = productFromJson(response.body);
-      return products;
-    } else {
-      throw Exception('Failed to load products');
+  // Notes: FetchProduct menggunakan CookieRequest agar memunculkan toggle bookmarked unik setiap user
+  Future<List<Product>> fetchProducts(CookieRequest request, String category) async {
+    final response = await request.get(
+      'http://localhost:8000/get-products-by-category/?category=$category', // Update URL as needed
+    );
+    List<Product> listProduct = [];
+    for (var d in response) {
+      if (d != null) {
+        listProduct.add(Product.fromJson(d));
+      }
     }
+    return listProduct;
   }
+
+  Future<void> deleteProduct(CookieRequest request, int productId) async {
+  try {
+    final response = await http.post(
+      Uri.parse('http://localhost:8000/delete-product-flutter/'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'id': productId}),
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        _products = fetchProducts(request, selectedCategory); // Refresh product list
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Product deleted successfully.'),
+          duration: Duration(seconds: 1),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to delete product.')),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('An error occurred. Please try again.')),
+    );
+  }
+}
 
   Future<List<Category>> fetchCategories() async {
     final response = await http.get(Uri.parse('http://localhost:8000/get-categories/')); // Update URL as needed
@@ -46,28 +81,28 @@ class _ProductListPageState extends State<ProductListPage> {
     }
   }
 
-  Future<void> toggleBookmark(int productId) async {
+  Future<void> toggleBookmark(CookieRequest request, String productName) async {
     try {
-      final response = await http.post(
-        Uri.parse('http://localhost:8000/toggle-bookmark/'), // Update URL as needed
-        body: jsonEncode({'product_id': productId}),
-        headers: {'Content-Type': 'application/json'},
+      final response = await request.postJson(
+        "http://localhost:8000/bookmarks/toogle-bookmark/",
+        jsonEncode(<String, String>{
+          'product_name': productName,
+        }),
       );
 
-      if (response.statusCode == 200) {
-        final responseBody = json.decode(response.body);
-        if (responseBody['status'] == 'success') {
-          setState(() {
-            _products = fetchProducts(selectedCategory); // Refresh the product list
-          });
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Failed to update bookmark.')),
-          );
-        }
+      if (response['status'] == 'success') {
+        setState(() {
+          _products = fetchProducts(request, selectedCategory); // Refresh the product list
+        });
+        String message = response['message'];
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+          content: Text(message),
+          duration: const Duration(seconds: 1),),
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server error. Please try again later.')),
+          const SnackBar(content: Text('Failed to update bookmark.')),
         );
       }
     } catch (e) {
@@ -79,6 +114,12 @@ class _ProductListPageState extends State<ProductListPage> {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.read<CookieRequest>(); // Akses CookieRequest
+
+    // Inisialisasi future di sini menggunakan request
+    _products = fetchProducts(request, selectedCategory);
+    _categories = fetchCategories();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Product List'),
@@ -97,26 +138,33 @@ class _ProductListPageState extends State<ProductListPage> {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else if (snapshot.hasData) {
                 final categories = snapshot.data!;
-                return DropdownButton<String>(
-                  value: selectedCategory,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      selectedCategory = newValue!;
-                      _products = fetchProducts(selectedCategory); // Fetch filtered products
-                    });
-                  },
-                  items: [
-                    DropdownMenuItem(
-                      value: 'ALL',
-                      child: Text('All Categories'),
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: DropdownButtonFormField<String>(
+                    decoration: const InputDecoration(
+                      labelText: 'Pilih Kategori', // Change the label text as needed
+                      border: OutlineInputBorder(),
                     ),
-                    ...categories.map<DropdownMenuItem<String>>((category) {
-                      return DropdownMenuItem<String>(
-                        value: category.pk.toString(),
-                        child: Text(category.fields.name),
-                      );
-                    }).toList(),
-                  ],
+                    value: selectedCategory,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedCategory = newValue!;
+                        _products = fetchProducts(request ,selectedCategory); // Fetch filtered products
+                      });
+                    },
+                    items: [
+                      const DropdownMenuItem(
+                        value: 'ALL',
+                        child: Text('All Categories'),
+                      ),
+                      ...categories.map<DropdownMenuItem<String>>((category) {
+                        return DropdownMenuItem<String>(
+                          value: category.pk.toString(),
+                          child: Text(category.fields.name),
+                        );
+                      }).toList(),
+                    ],
+                  ),
                 );
               } else {
                 return const Center(child: Text('No categories available.'));
@@ -139,7 +187,8 @@ class _ProductListPageState extends State<ProductListPage> {
                       final product = products[index];
                       return ProductCard(
                         product: product,
-                        onToggleBookmark: () => toggleBookmark(product.pk),
+                        onToggleBookmark: () => toggleBookmark(request, product.fields.name),
+                        onDelete: () => deleteProduct(request, product.pk), 
                       );
                     },
                   );

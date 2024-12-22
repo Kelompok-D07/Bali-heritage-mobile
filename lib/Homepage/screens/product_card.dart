@@ -5,11 +5,13 @@ import 'package:bali_heritage/Homepage/screens/restaurant_page.dart'; // Import 
 class ProductCard extends StatelessWidget {
   final Product product;
   final VoidCallback onToggleBookmark;
+  final VoidCallback onDelete; // Add this callback for the delete functionality
 
   const ProductCard({
     super.key,
     required this.product,
     required this.onToggleBookmark,
+    required this.onDelete, // Pass the delete callback
   });
 
   @override
@@ -18,12 +20,11 @@ class ProductCard extends StatelessWidget {
       padding: const EdgeInsets.all(12.0),
       child: InkWell(
         onTap: () {
-          // Navigate to the RestaurantPage with the restaurant name from the product
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => RestaurantPage(
-                restaurantName: product.fields.restaurantName, // Make sure this is the correct field
+                restaurantName: product.fields.restaurantName,
               ),
             ),
           );
@@ -36,7 +37,6 @@ class ProductCard extends StatelessWidget {
           color: Colors.white,
           child: Row(
             children: [
-              // Product Image
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.network(
@@ -52,14 +52,12 @@ class ProductCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              // Product Details
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Product Name
                       Text(
                         product.fields.name,
                         style: const TextStyle(
@@ -69,7 +67,6 @@ class ProductCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      // Product Description
                       Text(
                         product.fields.description,
                         maxLines: 3,
@@ -80,7 +77,6 @@ class ProductCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      // Product Price
                       Text(
                         'Rp ${product.fields.price}',
                         style: const TextStyle(
@@ -90,23 +86,42 @@ class ProductCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      // Bookmark Button
-                      ElevatedButton(
-                        onPressed: onToggleBookmark,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: product.fields.category == 1
-                              ? Colors.orange
-                              : Colors.grey,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: onToggleBookmark,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: product.fields.bookmarked == true
+                                    ? Colors.orange
+                                    : Colors.grey,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: Text(
+                                product.fields.bookmarked == true
+                                    ? 'Remove Bookmark'
+                                    : 'Add to Bookmark',
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ),
                           ),
-                        ),
-                        child: Text(
-                          product.fields.category == 1
-                              ? 'Remove Bookmark'
-                              : 'Add to Bookmark',
-                          style: const TextStyle(color: Colors.white),
-                        ),
+                          const SizedBox(width: 8),
+                          ElevatedButton(
+                            onPressed: onDelete,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Text(
+                              'Delete',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

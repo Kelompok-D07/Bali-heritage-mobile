@@ -54,6 +54,14 @@ class _RestaurantPageState extends State<RestaurantPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orangeAccent,
+        title: const Text(
+          'Store Details',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
       ),
       body: FutureBuilder<RestaurantData>(
         future: _restaurantDataFuture,
@@ -68,13 +76,32 @@ class _RestaurantPageState extends State<RestaurantPage> {
             final restaurantData = snapshot.data!;
             return ListView(
               children: [
-                // Removed Restaurant Logo
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
+                // Restaurant Banner
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Colors.orangeAccent, Colors.white],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.all(16),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // Restaurant Name (Displaying from fetched data)
+                      // Placeholder for logo
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundColor: Colors.orange,
+                        child: const Icon(
+                          Icons.store,
+                          color: Colors.white,
+                          size: 40,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
                       Text(
                         restaurantData.restaurant.fields.name,
                         style: const TextStyle(
@@ -82,38 +109,46 @@ class _RestaurantPageState extends State<RestaurantPage> {
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
                         ),
+                        textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 8),
-                      // Description
                       Text(
                         restaurantData.restaurant.fields.description,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
                           color: Colors.black54,
                         ),
+                        textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 16),
-                      // Location
+                      const SizedBox(height: 8),
                       Text(
-                        'Location: ${restaurantData.restaurant.fields.location}',
+                        '📍 ${restaurantData.restaurant.fields.location}',
                         style: const TextStyle(
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.w500,
                           color: Colors.orange,
                         ),
+                        textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 16),
-                      // Products List Header
-                      Text(
-                        'Products:',
-                        style: const TextStyle(
-                          fontSize: 20,
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Products Section
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Products',
+                        style: TextStyle(
+                          fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
                         ),
                       ),
                       const SizedBox(height: 8),
-                      // Products List
                       ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
@@ -136,20 +171,21 @@ class _RestaurantPageState extends State<RestaurantPage> {
                                 ),
                               ),
                               subtitle: Text(
-                                'Rp ${product.fields.price}', // Display price with Rp prefix
-                                style: TextStyle(
+                                'Rp ${product.fields.price}',
+                                style: const TextStyle(
                                   fontSize: 16,
-                                  color: Colors.black54,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.orange,
                                 ),
                               ),
                               leading: Icon(
-                                Icons.shopping_cart,
+                                Icons.shopping_basket,
                                 color: Colors.orangeAccent,
                               ),
                               tileColor: Colors.white,
                             ),
                           );
-                        }
+                        },
                       ),
                     ],
                   ),
