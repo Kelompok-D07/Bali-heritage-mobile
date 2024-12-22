@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:bali_heritage/Baliloka_stories/models/stories_entry.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-// import 'package:[APP_NAME]/widgets/left_drawer.dart';
+import 'storiesentry_form.dart';
+import 'edit_stories_page.dart';
 
 class StoriesEntryPage extends StatefulWidget {
   const StoriesEntryPage({super.key});
@@ -14,18 +15,109 @@ class StoriesEntryPage extends StatefulWidget {
 class _StoriesEntryPageState extends State<StoriesEntryPage> {
   Future<List<StoriesEntry>> fetchStories(CookieRequest request) async {
     final response = await request.get('http://127.0.0.1:8000/stories/json/');
-    
-    // Melakukan decode response menjadi bentuk json
-    var data = response;
-    
-    // Melakukan konversi data json menjadi object MoodEntry
-    List<StoriesEntry> listStories = [];
-    for (var d in data) {
-      if (d != null) {
-        listStories.add(StoriesEntry.fromJson(d));
-      }
+
+    // Cek apakah response adalah List
+    if (response is List) {
+      return response.map((json) => StoriesEntry.fromJson(json)).toList();
+    } else {
+      throw Exception("Invalid response format");
     }
-    return listStories;
+  }
+
+  void _showPopup(BuildContext context, StoriesEntry story) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return Center(
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.6,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ListTile(
+                      leading: const Icon(Icons.edit, color: Colors.black),
+                      title: const Text(
+                        'Edit',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      onTap: () async {
+                        Navigator.pop(context);
+                        final updatedData = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditStoriesPage(story: story),
+                          ),
+                        );
+
+                        // Jika data diperbarui, perbarui daftar cerita
+                        if (updatedData != null && mounted) {
+                          setState(() {
+                            story.name = updatedData['name'];
+                            story.description = updatedData['description'];
+                            story.image = 'data:image/png;base64,' + updatedData['image'];
+                          });
+                        }
+                      },
+                    ),
+                    const Divider(color: Colors.black),
+                    ListTile(
+                      leading: const Icon(Icons.delete, color: Colors.black),
+                      title: const Text(
+                        'Delete',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                      onTap: () async {
+                        Navigator.pop(context);
+                        final request = context.read<CookieRequest>();
+                        await handleDelete(request, story);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> handleDelete(CookieRequest request, StoriesEntry story) async {
+    try {
+      final response = await request.post(
+        'http://127.0.0.1:8000/stories/delete-flutter/${story.id}/',
+        {},
+      );
+
+      if (response['status'] == 'success') {
+        setState(() {
+          // Menghapus cerita dari daftar
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Story deleted successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to delete story'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
@@ -33,56 +125,111 @@ class _StoriesEntryPageState extends State<StoriesEntryPage> {
     final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Stories Entry List'),
+        title: const Text('Bali Stories'),
       ),
-      // drawer: const LeftDrawer(),
       body: FutureBuilder(
         future: fetchStories(request),
         builder: (context, AsyncSnapshot snapshot) {
-          if (snapshot.data == null) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
+          } else if (!snapshot.hasData || snapshot.data.isEmpty) {
+            return const Center(
+              child: Text(
+                'Belum ada data Stories.',
+                style: TextStyle(fontSize: 20, color: Color(0xff59A5D8)),
+              ),
+            );
           } else {
-            if (!snapshot.hasData) {
-              return const Column(
-                children: [
-                  Text(
-                    'Belum ada data Stories.',
-                    style: TextStyle(fontSize: 20, color: Color(0xff59A5D8)),
-                  ),
-                  SizedBox(height: 8),
-                ],
-              );
-            } else {
-              return ListView.builder(
-                itemCount: snapshot.data!.length,
-                itemBuilder: (_, index) => Container(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "${snapshot.data![index].fields.name}",
-                        style: const TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text("${snapshot.data![index].fields.name}"),
-                      const SizedBox(height: 10),
-                      Text("${snapshot.data![index].fields.image}"),
-                      const SizedBox(height: 10),
-                      Text("${snapshot.data![index].fields.description}")
-                    ],
-                  ),
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  childAspectRatio: 0.7,
                 ),
-              );
-            }
+                itemCount: snapshot.data.length,
+                itemBuilder: (_, index) {
+                  final story = snapshot.data[index];
+                  return Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Stack(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 8),
+                              Center(
+                                child: Text(
+                                  story.name,
+                                  style: const TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              AspectRatio(
+                                aspectRatio: 1,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.network(
+                                    story.image,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Expanded(
+                                child: SingleChildScrollView(
+                                  child: Text(
+                                    story.description,
+                                    style: const TextStyle(
+                                      fontSize: 14.0,
+                                      color: Colors.grey,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: IconButton(
+                            icon: const Icon(Icons.more_vert),
+                            onPressed: () => _showPopup(context, story),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            );
           }
         },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const StoriesEntryForm(),
+            ),
+          );
+        },
+        icon: const Icon(Icons.add),
+        label: const Text("Tambah Stories"),
       ),
     );
   }
