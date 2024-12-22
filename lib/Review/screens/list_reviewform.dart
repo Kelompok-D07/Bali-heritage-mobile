@@ -79,7 +79,7 @@ class _ReviewEntryPageState extends State<ReviewEntryPage> {
 
   /// Fungsi hapus review
   Future<bool> deleteReview(CookieRequest request, String pk) async {
-    final url = 'http://localhost:8000/review/delete-review-flutter/$pk/';
+    final url = 'http://127.0.0.1:8000/review/delete-review-flutter/$pk/';
     final response = await request.post(url, {});
 
     if (response['status'] == 'success') {
