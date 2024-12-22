@@ -28,7 +28,7 @@ class _ForumPageState extends State<ForumPage> {
 
     // Fungsi untuk mengambil semua postingan forum
     Future<List<Forum>> fetchForums(CookieRequest request) async {
-      final url = 'http://127.0.0.1:8000/forum/json/';
+      final url = 'https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/forum/json/';
       print('Fetching forums from: $url');
 
       final response = await request.get(url);
@@ -44,7 +44,7 @@ class _ForumPageState extends State<ForumPage> {
 
     // Fungsi untuk mengambil daftar restoran
     Future<List<Restaurant>> fetchRestaurants(CookieRequest request) async {
-      final url = 'http://127.0.0.1:8000/get-restaurants/';
+      final url = 'https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/get-restaurants/';
       print('Fetching restaurants from: $url');
 
       final response = await request.get(url);
@@ -60,7 +60,7 @@ class _ForumPageState extends State<ForumPage> {
 
     // Fungsi untuk toggle like pada postingan
     Future<void> _toggleLike(int postId) async {
-      final url = 'http://127.0.0.1:8000/forum/like_post_flutter/$postId/';
+      final url = 'https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/forum/like_post_flutter/$postId/';
       print('Sending POST request to: $url');
 
       try {
@@ -125,7 +125,7 @@ class _ForumPageState extends State<ForumPage> {
 
     // Fungsi untuk menghapus postingan
     Future<void> _deletePost(int postId) async {
-      final url = 'http://127.0.0.1:8000/forum/delete_post_flutter/$postId/';
+      final url = 'https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/forum/delete_post_flutter/$postId/';
       print('Deleting post with ID: $postId');
 
       try {

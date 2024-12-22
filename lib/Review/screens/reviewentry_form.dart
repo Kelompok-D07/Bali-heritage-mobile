@@ -28,7 +28,7 @@ class _ReviewEntryFormPageState extends State<ReviewEntryFormPage> {
   }
 
   Future<void> _fetchRestaurants() async {
-    final url = 'http://127.0.0.1:8000/review/show-restaurant/';
+    final url = 'https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/review/show-restaurant/';
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
@@ -171,7 +171,7 @@ class _ReviewEntryFormPageState extends State<ReviewEntryFormPage> {
                     // Validasi form & rating
                     if (_formKey.currentState!.validate() && _rating > 0) {
                       final response = await request.postJson(
-                        "http://127.0.0.1:8000/review/create-review-flutter/",
+                        "https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/review/create-review-flutter/",
                         jsonEncode(<String, String>{
                           'comment': _comment,
                           'rating': _rating.toString(),

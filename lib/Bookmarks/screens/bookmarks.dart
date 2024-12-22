@@ -27,7 +27,7 @@ class _BookmarkPageState extends State<BookmarkPage> {
 
   Future<List<Bookmark>> fetchBookmarks(CookieRequest request, String category) async {
     final response = await request.get(
-      'http://localhost:8000/bookmarks/json/?category=$category',
+      'https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/bookmarks/json/?category=$category',
     );
     List<Bookmark> listBookmark = [];
     for (var d in response) {
@@ -39,7 +39,7 @@ class _BookmarkPageState extends State<BookmarkPage> {
   }
 
   Future<List<Category>> fetchCategories() async {
-    final response = await http.get(Uri.parse('http://localhost:8000/get-categories/'));
+    final response = await http.get(Uri.parse('https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/get-categories/'));
     if (response.statusCode == 200) {
       final List<Category> categories = categoryFromJson(response.body);
       return categories;

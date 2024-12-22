@@ -16,7 +16,7 @@ class LeftDrawer extends StatelessWidget {
 
   Future<void> _logout(BuildContext context) async {
     try {
-      final url = Uri.parse('http://localhost:8000/auth/logout/'); // Replace with your API endpoint
+      final url = Uri.parse('https://muhammad-adiansyah-baliheritage.pbp.cs.ui.ac.id/auth/logout/'); // Replace with your API endpoint
       final response = await http.post(url); // Send POST request to logout endpoint
 
       if (response.statusCode == 200) {
@@ -27,10 +27,11 @@ class LeftDrawer extends StatelessWidget {
             SnackBar(content: Text(responseBody['message'])),
           );
 
-          // Navigate to LoginPage
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const LoginPage()),
+          // Navigate to LoginPage and remove all previous routes from the stack
+          Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+          (Route<dynamic> route) => false, // Removes all previous routes
           );
         } else {
           // Show error message
