@@ -125,6 +125,7 @@ class _StoriesEntryPageState extends State<StoriesEntryPage> {
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
     final primaryColor = Theme.of(context).primaryColor;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryColor, 
@@ -138,101 +139,114 @@ class _StoriesEntryPageState extends State<StoriesEntryPage> {
         ),
         centerTitle: false,
       ),
-      body: FutureBuilder(
-        future: fetchStories(request),
-        builder: (context, AsyncSnapshot snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (!snapshot.hasData || snapshot.data.isEmpty) {
-            return const Center(
-              child: Text(
-                'Belum ada data Stories.',
-                style: TextStyle(fontSize: 20, color: Colors.grey),
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.white, Colors.orange],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
-            );
-          } else {
-            return Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: 0.6, // Memperpanjang card secara vertikal
-                ),
-                itemCount: snapshot.data.length,
-                itemBuilder: (_, index) {
-                  final story = snapshot.data[index];
-                  return Card(
-                    elevation: 6,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+          FutureBuilder(
+            future: fetchStories(request),
+            builder: (context, AsyncSnapshot snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (!snapshot.hasData || snapshot.data.isEmpty) {
+                return const Center(
+                  child: Text(
+                    'Belum ada data Stories.',
+                    style: TextStyle(fontSize: 20, color: Colors.grey),
+                  ),
+                );
+              } else {
+                return Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: 0.6, // Memperpanjang card secara vertikal
                     ),
-                    child: Stack(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 8),
-                              Center(
-                                child: Text(
-                                  story.name,
-                                  style: const TextStyle(
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              AspectRatio(
-                                aspectRatio: 1,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: Image.network(
-                                    story.image,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              // Memberikan lebih banyak ruang untuk deskripsi
-                              Expanded(
-                                child: SingleChildScrollView(
-                                  child: Text(
-                                    story.description,
-                                    style: const TextStyle(
-                                      fontSize: 14.0,
-                                      color: Colors.black, // Menjadikan tulisan deskripsi hitam
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (_, index) {
+                      final story = snapshot.data[index];
+                      return Card(
+                        elevation: 6,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Stack(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 8),
+                                  Center(
+                                    child: Text(
+                                      story.name,
+                                      style: const TextStyle(
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.center,
                                     ),
-                                    textAlign: TextAlign.left,
                                   ),
-                                ),
+                                  const SizedBox(height: 12),
+                                  AspectRatio(
+                                    aspectRatio: 1,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: Image.network(
+                                        story.image,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  // Memberikan lebih banyak ruang untuk deskripsi
+                                  Expanded(
+                                    child: SingleChildScrollView(
+                                      child: Text(
+                                        story.description,
+                                        style: const TextStyle(
+                                          fontSize: 14.0,
+                                          color: Colors.black, // Menjadikan tulisan deskripsi hitam
+                                        ),
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                            Positioned(
+                              top: 8,
+                              right: 8,
+                              child: IconButton(
+                                icon: const Icon(Icons.more_vert, color: Colors.black),
+                                onPressed: () => _showPopup(context, story),
+                              ),
+                            ),
+                          ],
                         ),
-                        Positioned(
-                          top: 8,
-                          right: 8,
-                          child: IconButton(
-                            icon: const Icon(Icons.more_vert, color: Colors.black),
-                            onPressed: () => _showPopup(context, story),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            );
-          }
-        },
+                      );
+                    },
+                  ),
+                );
+              }
+            },
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: primaryColor, 
+        backgroundColor: primaryColor.withOpacity(1), // Membuat warna lebih terang dengan opacity
         onPressed: () {
           Navigator.push(
             context,
@@ -243,7 +257,7 @@ class _StoriesEntryPageState extends State<StoriesEntryPage> {
         },
         icon: const Icon(Icons.add),
         label: const Text(
-          "Tambah Stories", 
+          "Tambah Stories",
           style: TextStyle(fontWeight: FontWeight.bold), // Menebalkan teks
         ),
       ),
