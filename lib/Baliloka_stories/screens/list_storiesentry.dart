@@ -102,7 +102,7 @@ class _StoriesEntryPageState extends State<StoriesEntryPage> {
       if (response['status'] == 'success') {
         setState(() {
           // Menghapus cerita dari daftar
-        });
+        }); //coba
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
