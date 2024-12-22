@@ -1,10 +1,21 @@
+// lib/Forum/forumpage.dart
+
+import 'dart:convert';
+import 'package:bali_heritage/Homepage/screens/restaurant_page.dart';
+import 'package:bali_heritage/widgets/left_drawer.dart';
 import 'package:flutter/material.dart';
-import 'forum_models.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+import 'models/forum_models.dart';
+import 'package:bali_heritage/Homepage/models/Restaurant.dart'; // Import model Restaurant
 import 'forum_create_page.dart';
 import 'forum_edit_page.dart';
 import 'forum_utils.dart';
 
+
 class ForumPage extends StatefulWidget {
+   // Pastikan userId diberikan saat memanggil ForumPage
+
   const ForumPage({Key? key}) : super(key: key);
 
   @override
@@ -12,195 +23,345 @@ class ForumPage extends StatefulWidget {
 }
 
 class _ForumPageState extends State<ForumPage> {
-
-  List<ForumPost> allPosts = [];
   String searchQuery = '';
 
   @override
-  void initState() {
-    super.initState();
-    _loadDummyData();
-  }
+  Widget build(BuildContext context) {
+    final request = context.read<CookieRequest>();
 
-  void _loadDummyData() {
-    // Data dummy awal
-    allPosts = [
-      ForumPost(
-        id: '1',
-        title: 'adwa',
-        content: 'wada',
-        author: 'husin.hidayatul',
-        createdAt: DateTime(2024, 12, 07, 19, 32),
-        totalLikes: 0,
-        hasLiked: false,
-        recommendations: [],
-      ),
-    ];
-  }
+    // Fungsi untuk mengambil semua postingan forum
+    Future<List<Forum>> fetchForums(CookieRequest request) async {
+      final url = 'http://127.0.0.1:8000/forum/json/';
+      print('Fetching forums from: $url');
 
-  List<ForumPost> get filteredPosts {
-    if (searchQuery.isEmpty) return allPosts;
-    return allPosts.where((post) {
-      return post.title.toLowerCase().contains(searchQuery.toLowerCase()) ||
-             post.content.toLowerCase().contains(searchQuery.toLowerCase());
-    }).toList();
-  }
+      final response = await request.get(url);
 
-  void _toggleLike(ForumPost post) {
-    setState(() {
-      post.hasLiked = !post.hasLiked;
-      // Pada integrasi sungguhan, totalLikes akan dari server
-      // Disini, karena dummy, kita asumsikan totalLikes tidak berubah kecuali user like/unlike
-      // Jika user like dan sebelumnya belum like:
-      if (post.hasLiked) {
-        // misal totalLikes++ jika diinginkan
-      } else {
-        // misal totalLikes-- jika diinginkan, tapi pastikan tidak negatif
-      }
-    });
-  }
-//////////////////////////////////////////////////////
-  Future<void> _createPost() async { 
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const ForumCreatePage()),
-    );
-    if (result != null && result is ForumPost) {
-      setState(() {
-        allPosts.insert(0, result); // tambahkan post baru di atas
-      });
-    }
-  }
-
-  Future<void> _editPost(ForumPost post) async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ForumEditPage(post: post)),
-    );
-    if (result != null && result is ForumPost) {
-      // Update post di list
-      setState(() {
-        final index = allPosts.indexWhere((p) => p.id == post.id);
-        if (index != -1) {
-          allPosts[index] = result;
+      // Debugging respons sebagian untuk JSON
+      List<Forum> listForum = [];
+        for (var d in response) {
+          if (d != null) {
+            listForum.add(Forum.fromJson(d));
+          }
         }
-      });
+
+      
+      return listForum;
     }
-  }
 
-  void _deletePost(ForumPost post) {
-    // Delete langsung dari list
-    setState(() {
-      allPosts.removeWhere((p) => p.id == post.id);
-    });
-  }
-//////////////////////////////////////////////////////
-  Widget _buildPostCard(ForumPost post) {
-    // Format waktu
-    final dateString = "${post.createdAt.year}-${post.createdAt.month.toString().padLeft(2,'0')}-${post.createdAt.day.toString().padLeft(2,'0')} ${post.createdAt.hour.toString().padLeft(2,'0')}:${post.createdAt.minute.toString().padLeft(2,'0')}";
+    // Fungsi untuk mengambil daftar restoran
+    Future<List<Restaurant>> fetchRestaurants(CookieRequest request) async {
+      final url = 'http://127.0.0.1:8000/get-restaurants/';
+      print('Fetching restaurants from: $url');
 
-    // Highlight title dan content jika ada searchQuery
-    final titleSpan = highlightText(post.title, searchQuery);
-    final contentSpan = highlightText(post.content, searchQuery);
+      final response = await request.get(url);
 
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Title
-            RichText(
-              text: TextSpan(
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
-                children: [titleSpan],
-              ),
+      List<Restaurant> listRestaurant = [];
+        for (var d in response) {
+          if (d != null) {
+            listRestaurant.add(Restaurant.fromJson(d));
+          }
+        }
+        print('\nDaftar Restoran:');
+        for (var restaurant in listRestaurant) {
+          print(
+            'Model: ${restaurant.model}, PK: ${restaurant.pk}, Name: ${restaurant.fields.name}, Location: ${restaurant.fields.location}',
+          );
+        }
+        return listRestaurant;
+    }
+
+    // Fungsi untuk toggle like pada postingan
+    Future<void> _toggleLike(int postId) async {
+      final url = 'http://127.0.0.1:8000/forum/like_post_flutter/$postId/';
+      print('Sending POST request to: $url');
+
+      try {
+        final response = await request.postJson(url, jsonEncode({}));
+        print('Like Response: $response');
+
+        if (response['success'] == true) {
+          setState(() {}); // Refresh data setelah toggle like
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(response['liked'] == true
+                  ? 'Post liked!'
+                  : 'Post unliked!'),
             ),
-            const SizedBox(height: 8),
-            // Content
-            RichText(
-              text: TextSpan(
-                style: const TextStyle(fontSize: 14, color: Colors.black87),
-                children: [contentSpan],
-              ),
-            ),
-            const SizedBox(height: 8),
-            // By author on datetime
-            Text(
-              "By ${post.author} on $dateString",
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
-            ),
-            const SizedBox(height: 16),
-            // Like count & Edit & Delete row
-            Row(
-              children: [
-                // Like
-                InkWell(
-                  onTap: () => _toggleLike(post),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.favorite,
-                        color: post.hasLiked ? Colors.red : Colors.blueGrey,
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(response['error'] ?? 'Failed to like post.')),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      }
+    }
+
+    // Fungsi untuk menyaring postingan berdasarkan query pencarian
+    List<Forum> _filterPosts(List<Forum> posts) {
+      if (searchQuery.isEmpty) return posts;
+      return posts.where((post) {
+        return post.fields.title.toLowerCase().contains(searchQuery.toLowerCase()) ||
+            post.fields.content.toLowerCase().contains(searchQuery.toLowerCase());
+      }).toList();
+    }
+
+    // Fungsi untuk membuat postingan baru
+    Future<void> _createPost() async {
+      final result = await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ForumCreatePage()),
+      );
+
+      if (result == true) {
+        setState(() {}); // Refresh data setelah postingan baru dibuat
+      }
+    }
+
+    // Fungsi untuk mengedit postingan
+    Future<void> _editPost(Forum post) async {
+      final result = await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ForumEditPage(post: post)),
+      );
+
+      if (result == true) {
+        setState(() {}); // Refresh data setelah postingan diedit
+      }
+    }
+
+    // Fungsi untuk menghapus postingan
+    Future<void> _deletePost(int postId) async {
+      final url = 'http://127.0.0.1:8000/forum/delete_post_flutter/$postId/';
+      print('Deleting post with ID: $postId');
+
+      try {
+        final response = await request.postJson(url, jsonEncode({}));
+        print('Delete Response: $response');
+
+        if (response['success'] == true) {
+          setState(() {}); // Refresh data setelah postingan dihapus
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Post deleted successfully.')),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(response['error'] ?? 'Failed to delete post.')),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${e.toString()}')),
+        );
+      }
+    }
+
+    // Fungsi untuk menampilkan rekomendasi restoran
+    void _showRecommendations(List<Restaurant> restaurants) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Recommended Restaurants'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: restaurants.length,
+              itemBuilder: (context, index) {
+                final restaurant = restaurants[index];
+                return ListTile(
+                  title: Text(restaurant.fields.name),
+                  subtitle: Text(restaurant.fields.location),
+                  onTap: () {
+                    Navigator.pop(context); // Tutup dialog
+                    Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RestaurantPage(
+                        restaurantName: restaurant.pk,
                       ),
-                      const SizedBox(width: 4),
-                      Text("${post.totalLikes} likes", style: const TextStyle(fontSize: 14)),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 16),
-                // Edit
-                InkWell(
-                  onTap: () => _editPost(post),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.edit, color: Colors.green),
-                      const SizedBox(width: 4),
-                      const Text("Edit", style: TextStyle(fontSize: 14, color: Colors.green)),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 16),
-                // Delete
-                InkWell(
-                  onTap: () => _deletePost(post),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.close, color: Colors.red),
-                      const SizedBox(width: 4),
-                      const Text("Delete", style: TextStyle(fontSize: 14, color: Colors.red)),
-                    ],
-                  ),
-                ),
-              ],
-            )
+                    ),
+                  );
+                  },
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('Close'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
           ],
         ),
+      );
+    }
+
+    // Widget untuk membangun tampilan kartu postingan
+    // Widget untuk membangun tampilan kartu postingan
+Widget _buildPostCard(Forum post, List<Restaurant> restaurants) {
+  final dateString =
+      "${post.fields.createdAt.year}-${post.fields.createdAt.month.toString().padLeft(2, '0')}-${post.fields.createdAt.day.toString().padLeft(2, '0')} ${post.fields.createdAt.hour.toString().padLeft(2, '0')}:${post.fields.createdAt.minute.toString().padLeft(2, '0')}";
+
+  return Card(
+    elevation: 2,
+    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    child: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Judul
+          // Judul dengan highlight
+
+RichText(
+  text: highlightText(
+    post.fields.title,
+    searchQuery,
+    defaultStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+  ),
+),
+const SizedBox(height: 8),
+
+// Konten dengan highlight
+RichText(
+  text: highlightText(
+    post.fields.content,
+    searchQuery,
+    defaultStyle: const TextStyle(fontSize: 14),
+  ),
+),
+const SizedBox(height: 8),
+
+
+          // Informasi penulis dan tanggal
+          Text(
+            "By ${post.fields.authorName} on $dateString",
+            style: const TextStyle(fontSize: 12, color: Colors.grey),
+          ),
+          const SizedBox(height: 16),
+          // Rekomendasi restoran langsung pada kartu
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Recommendations:",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8.0,
+                runSpacing: 8.0,
+                children: restaurants.map((restaurant) => InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RestaurantPage(
+                              restaurantName: restaurant.pk,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Chip(
+                        label: Text(
+                          restaurant.fields.name,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                        backgroundColor: Colors.blue.shade50,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    )).toList(),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          // Baris untuk Like, Edit, dan Delete
+          Row(
+            children: [
+              // Like
+              InkWell(
+                onTap: () => _toggleLike(post.pk),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.favorite,
+                      color: post.fields.isLiked
+                          ? Colors.red
+                          : Colors.blueGrey,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      "${post.fields.totalLikes}",
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 16),
+              // Edit
+              InkWell(
+                onTap: () => _editPost(post),
+                child: Row(
+                  children: const [
+                    Icon(Icons.edit, color: Colors.green),
+                    SizedBox(width: 4),
+                    Text("Edit",
+                        style:
+                            TextStyle(fontSize: 14, color: Colors.green)),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 16),
+              // Delete
+              InkWell(
+                onTap: () => _deletePost(post.pk),
+                child: Row(
+                  children: const [
+                    Icon(Icons.close, color: Colors.red),
+                    SizedBox(width: 4),
+                    Text("Delete",
+                        style:
+                            TextStyle(fontSize: 14, color: Colors.red)),
+                  ],
+                ),
+              ),
+            ],
+          )
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 
-  @override
-  Widget build(BuildContext context) {
-    final posts = filteredPosts;
 
+   
+
+    // Widget utama ForumPage
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Forum'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Colors.white,
+        
+      ),
+      drawer: const LeftDrawer(),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical:16.0, horizontal: 16.0),
+          padding:
+              const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Title Forum
-              const Text(
-                "Forum",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              // Search bar + Buttons
+              // Baris untuk Search dan Tombol New Post
               Row(
                 children: [
                   Expanded(
@@ -220,7 +381,7 @@ class _ForumPageState extends State<ForumPage> {
                   const SizedBox(width: 8),
                   ElevatedButton(
                     onPressed: () {
-                      // Implementasikan fungsi search jika diperlukan
+                      // Implementasi fitur search jika diperlukan
                     },
                     child: const Text("Search"),
                   ),
@@ -232,23 +393,46 @@ class _ForumPageState extends State<ForumPage> {
                 ],
               ),
               const SizedBox(height: 16),
-              // List Posts
-              if (posts.isEmpty)
-                const Expanded(
-                  child: Center(
-                    child: Text('No forum posts available.'),
-                  ),
-                )
-              else
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: posts.length,
-                    itemBuilder: (context, index) {
-                      final post = posts[index];
-                      return _buildPostCard(post);
-                    },
-                  ),
+              // FutureBuilder untuk mengambil dan menampilkan postingan dan restoran
+              Expanded(
+                child: FutureBuilder<List<dynamic>>(
+                  future: Future.wait([
+                    fetchForums(request),
+                    fetchRestaurants(request),
+                  ]),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      print('Error: 123');
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      print('No data available.');
+                      return const Center(child: Text('No forum posts available.'));
+                    } else {
+                      final forums = snapshot.data![0] as List<Forum>;
+                      final restaurants = snapshot.data![1] as List<Restaurant>;
+                      final filteredForums = _filterPosts(forums);
+                      if (filteredForums.isEmpty) {
+                        print('No matching posts found.');
+                        return const Center(child: Text('No matching posts found.'));
+                      }
+                      return RefreshIndicator(
+                        onRefresh: () async {
+                          setState(() {});
+                        },
+                        child: ListView.builder(
+                          itemCount: filteredForums.length,
+                          itemBuilder: (context, index) {
+                            final post = filteredForums[index];
+                            return _buildPostCard(post, restaurants);
+                          },
+                        ),
+                      );
+                    }
+                  },
                 ),
+              ),
             ],
           ),
         ),

@@ -1,14 +1,26 @@
-import 'package:bali_heritage/Baliloka_stories/screens/list_storiesentry.dart';
-import 'package:bali_heritage/Bookmarks/screens/bookmarks.dart';
-import 'package:bali_heritage/Forum/forum_create_page.dart';
-import 'package:bali_heritage/authentication/login.dart';
-import 'package:flutter/material.dart';
-import 'package:pbp_django_auth/pbp_django_auth.dart';
-import 'package:provider/provider.dart';
+// lib/main.dart
 
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:bali_heritage/authentication/login.dart'; // Pastikan path benar
+import 'package:bali_heritage/authentication/register.dart';
+import 'package:bali_heritage/Homepage/screens/homepage.dart';
+import 'package:bali_heritage/Forum/forumpage.dart';
+import 'package:bali_heritage/Forum/forum_create_page.dart';
+import 'package:bali_heritage/Forum/forum_edit_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        Provider<CookieRequest>(
+          create: (_) => CookieRequest(),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -16,28 +28,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Provider(
-      create: (_) {
-        CookieRequest request = CookieRequest();
-        return request;
-      },
-      child: MaterialApp(
-        routes: {
-    
-          '/create_post': (context) => const ForumCreatePage(),
-        },
-        title: 'Bali Heritage',
-        theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSwatch(
-            primarySwatch: Colors.orange,
-          ).copyWith(
-            secondary: Colors.orange[400],
-            background: Colors.white,
-          ),
+    return MaterialApp(
+      title: 'Bali Heritage',
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSwatch(
+          primarySwatch: Colors.orange,
+        ).copyWith(
+          secondary: Colors.orange[400],
+          background: Colors.white,
         ),
-        home: const StoriesEntryPage(),
-      ), // Removed the misplaced semicolon here.
+      ),
+      home: const LoginPage(), // Mulai dari halaman login
+      routes: {
+        '/register': (context) => const RegisterPage(),
+        '/home': (context) => const HomePage(),
+        '/forum': (context) => const ForumPage(),
+        '/create_post': (context) => const ForumCreatePage(),
+        // Tambahkan route lainnya jika diperlukan
+      },
     );
   }
 }

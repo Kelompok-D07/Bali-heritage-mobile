@@ -72,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
                       String password = _passwordController.text;
 
                       final response = await request
-                          .login("http://localhost:8000/auth/login/", {
+                          .login("http://127.0.0.1:8000/auth/login/", {
                         'username': username,
                         'password': password,
                       });
@@ -134,3 +134,4 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+ 

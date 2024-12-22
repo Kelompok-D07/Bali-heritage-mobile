@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:bali_heritage/Homepage/screens/restaurant_page.dart';
 import 'package:flutter/material.dart';
 
 // Import model yang dibutuhkan
@@ -49,8 +50,8 @@ class _BookmarkCardState extends State<BookmarkCard> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => RestaurantDetailPage(
-                productId: widget.bookmark.fields.productId,
+              builder: (context) => RestaurantPage(
+                restaurantName: widget.bookmark.fields.restaurantName,
               ),
             ),
           );
@@ -110,7 +111,7 @@ class _BookmarkCardState extends State<BookmarkCard> {
                         child: Text(
                           widget.bookmark.fields.notes.isNotEmpty
                               ? widget.bookmark.fields.notes
-                              : 'No notes yet.',
+                              : 'Belum ada notes',
                           style: const TextStyle(fontSize: 14, color: Colors.grey),
                         ),
                       ),
@@ -256,25 +257,6 @@ class _BookmarkCardState extends State<BookmarkCard> {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class RestaurantDetailPage extends StatelessWidget {
-  final int productId;
-
-  const RestaurantDetailPage({super.key, required this.productId});
-
-  @override
-  Widget build(BuildContext context) {
-    // Lakukan fetch data restaurant berdasarkan productId
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Detail Restaurant'),
-      ),
-      body: Center(
-        child: Text('Detail Restaurant ID: $productId'),
       ),
     );
   }
