@@ -1,5 +1,7 @@
 # Bali-heritage-mobile 🍹
 
+#Link : https://install.appcenter.ms/orgs/kelompok-pbp-d07/apps/bali-heritage/distribution_groups/public/releases/1
+
 ## Anggota Kelompok D07
 - Bastian Adiputra Siregar - 2306245005
 - Muhammad Akmal Abdul Halim - 2306245125
