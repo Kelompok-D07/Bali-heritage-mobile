@@ -3,6 +3,7 @@
 import 'package:bali_heritage/widgets/left_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:bali_heritage/Forum/forumpage.dart'; // Import ForumPage
+import 'package:bali_heritage/Baliloka_stories/screens/list_storiesentry.dart'; // Import StoriesPage
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -67,7 +68,11 @@ class HomePage extends StatelessWidget {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
-                    // Tambahkan fungsi atau navigasi lain jika diperlukan
+                    // Navigasi ke StoriesPage saat tombol ditekan
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const StoriesEntryPage()),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
