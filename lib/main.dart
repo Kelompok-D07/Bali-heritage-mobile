@@ -1,5 +1,4 @@
 import 'package:bali_heritage/Baliloka_stories/screens/list_storiesentry.dart';
-import 'package:bali_heritage/Baliloka_stories/screens/stories_page.dart';
 import 'package:bali_heritage/Bookmarks/screens/bookmarks.dart';
 import 'package:bali_heritage/Forum/forum_create_page.dart';
 import 'package:bali_heritage/authentication/login.dart';
@@ -37,7 +36,7 @@ class MyApp extends StatelessWidget {
             background: Colors.white,
           ),
         ),
-        home: const StoriesPage(),
+        home: const StoriesEntryPage(),
       ), // Removed the misplaced semicolon here.
     );
   }

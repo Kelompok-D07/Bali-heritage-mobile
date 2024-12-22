@@ -16,7 +16,6 @@ class _StoriesEntryPageState extends State<StoriesEntryPage> {
   Future<List<StoriesEntry>> fetchStories(CookieRequest request) async {
     final response = await request.get('http://127.0.0.1:8000/stories/json/');
 
-    // Cek apakah response adalah List
     if (response is List) {
       return response.map((json) => StoriesEntry.fromJson(json)).toList();
     } else {
@@ -33,21 +32,24 @@ class _StoriesEntryPageState extends State<StoriesEntryPage> {
           child: Material(
             color: Colors.transparent,
             child: Container(
-              width: MediaQuery.of(context).size.width * 0.6,
+              width: MediaQuery.of(context).size.width * 0.75,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(color: Colors.black26, blurRadius: 10, offset: Offset(0, 4)),
+                ],
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     ListTile(
-                      leading: const Icon(Icons.edit, color: Colors.black),
+                      leading: const Icon(Icons.edit, color: Colors.blue),
                       title: const Text(
                         'Edit',
-                        style: TextStyle(color: Colors.black),
+                        style: TextStyle(color: Colors.blue),
                       ),
                       onTap: () async {
                         Navigator.pop(context);
@@ -58,7 +60,6 @@ class _StoriesEntryPageState extends State<StoriesEntryPage> {
                           ),
                         );
 
-                        // Jika data diperbarui, perbarui daftar cerita
                         if (updatedData != null && mounted) {
                           setState(() {
                             story.name = updatedData['name'];
@@ -68,12 +69,12 @@ class _StoriesEntryPageState extends State<StoriesEntryPage> {
                         }
                       },
                     ),
-                    const Divider(color: Colors.black),
+                    const Divider(color: Colors.blue),
                     ListTile(
-                      leading: const Icon(Icons.delete, color: Colors.black),
+                      leading: const Icon(Icons.delete, color: Colors.red),
                       title: const Text(
                         'Delete',
-                        style: TextStyle(color: Colors.black),
+                        style: TextStyle(color: Colors.red),
                       ),
                       onTap: () async {
                         Navigator.pop(context);
@@ -123,9 +124,19 @@ class _StoriesEntryPageState extends State<StoriesEntryPage> {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
+    final primaryColor = Theme.of(context).primaryColor;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Bali Stories'),
+        backgroundColor: primaryColor, 
+        title: const Text(
+          'Bali Stories',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+            color: Colors.black,
+          ),
+        ),
+        centerTitle: false,
       ),
       body: FutureBuilder(
         future: fetchStories(request),
@@ -136,31 +147,31 @@ class _StoriesEntryPageState extends State<StoriesEntryPage> {
             return const Center(
               child: Text(
                 'Belum ada data Stories.',
-                style: TextStyle(fontSize: 20, color: Color(0xff59A5D8)),
+                style: TextStyle(fontSize: 20, color: Colors.grey),
               ),
             );
           } else {
             return Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(12.0),
               child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                  childAspectRatio: 0.7,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 0.6, // Memperpanjang card secara vertikal
                 ),
                 itemCount: snapshot.data.length,
                 itemBuilder: (_, index) {
                   final story = snapshot.data[index];
                   return Card(
-                    elevation: 4,
+                    elevation: 6,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(16),
                     ),
                     child: Stack(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(12.0),
+                          padding: const EdgeInsets.all(16.0),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -169,31 +180,32 @@ class _StoriesEntryPageState extends State<StoriesEntryPage> {
                                 child: Text(
                                   story.name,
                                   style: const TextStyle(
-                                    fontSize: 18.0,
+                                    fontSize: 20.0,
                                     fontWeight: FontWeight.bold,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
                               ),
-                              const SizedBox(height: 10),
+                              const SizedBox(height: 12),
                               AspectRatio(
                                 aspectRatio: 1,
                                 child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(12),
                                   child: Image.network(
                                     story.image,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 10),
+                              const SizedBox(height: 12),
+                              // Memberikan lebih banyak ruang untuk deskripsi
                               Expanded(
                                 child: SingleChildScrollView(
                                   child: Text(
                                     story.description,
                                     style: const TextStyle(
                                       fontSize: 14.0,
-                                      color: Colors.grey,
+                                      color: Colors.black, // Menjadikan tulisan deskripsi hitam
                                     ),
                                     textAlign: TextAlign.left,
                                   ),
@@ -206,7 +218,7 @@ class _StoriesEntryPageState extends State<StoriesEntryPage> {
                           top: 8,
                           right: 8,
                           child: IconButton(
-                            icon: const Icon(Icons.more_vert),
+                            icon: const Icon(Icons.more_vert, color: Colors.black),
                             onPressed: () => _showPopup(context, story),
                           ),
                         ),
@@ -220,6 +232,7 @@ class _StoriesEntryPageState extends State<StoriesEntryPage> {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: primaryColor, 
         onPressed: () {
           Navigator.push(
             context,
@@ -229,7 +242,10 @@ class _StoriesEntryPageState extends State<StoriesEntryPage> {
           );
         },
         icon: const Icon(Icons.add),
-        label: const Text("Tambah Stories"),
+        label: const Text(
+          "Tambah Stories", 
+          style: TextStyle(fontWeight: FontWeight.bold), // Menebalkan teks
+        ),
       ),
     );
   }
