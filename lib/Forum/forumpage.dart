@@ -10,6 +10,8 @@ import 'models/forum_models.dart';
 import 'package:bali_heritage/Homepage/models/Restaurant.dart'; // Import model Restaurant
 import 'forum_create_page.dart';
 import 'forum_edit_page.dart';
+import 'forum_utils.dart';
+
 
 class ForumPage extends StatefulWidget {
    // Pastikan userId diberikan saat memanggil ForumPage
@@ -201,111 +203,145 @@ class _ForumPageState extends State<ForumPage> {
     }
 
     // Widget untuk membangun tampilan kartu postingan
-    Widget _buildPostCard(Forum post, List<Restaurant> restaurants) {
-      final dateString =
-          "${post.fields.createdAt.year}-${post.fields.createdAt.month.toString().padLeft(2, '0')}-${post.fields.createdAt.day.toString().padLeft(2, '0')} ${post.fields.createdAt.hour.toString().padLeft(2, '0')}:${post.fields.createdAt.minute.toString().padLeft(2, '0')}";
+    // Widget untuk membangun tampilan kartu postingan
+Widget _buildPostCard(Forum post, List<Restaurant> restaurants) {
+  final dateString =
+      "${post.fields.createdAt.year}-${post.fields.createdAt.month.toString().padLeft(2, '0')}-${post.fields.createdAt.day.toString().padLeft(2, '0')} ${post.fields.createdAt.hour.toString().padLeft(2, '0')}:${post.fields.createdAt.minute.toString().padLeft(2, '0')}";
 
-      return Card(
-        elevation: 2,
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
+  return Card(
+    elevation: 2,
+    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    child: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Judul
+          // Judul dengan highlight
+
+RichText(
+  text: highlightText(
+    post.fields.title,
+    searchQuery,
+    defaultStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+  ),
+),
+const SizedBox(height: 8),
+
+// Konten dengan highlight
+RichText(
+  text: highlightText(
+    post.fields.content,
+    searchQuery,
+    defaultStyle: const TextStyle(fontSize: 14),
+  ),
+),
+const SizedBox(height: 8),
+
+
+          // Informasi penulis dan tanggal
+          Text(
+            "By ${post.fields.authorName} on $dateString",
+            style: const TextStyle(fontSize: 12, color: Colors.grey),
+          ),
+          const SizedBox(height: 16),
+          // Rekomendasi restoran langsung pada kartu
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Judul
-              Text(
-                post.fields.title,
-                style: const TextStyle(
-                    fontSize: 18, fontWeight: FontWeight.bold),
+              const Text(
+                "Recommendations:",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
-              // Konten
-              Text(
-                post.fields.content,
-                style: const TextStyle(fontSize: 14),
-              ),
-              const SizedBox(height: 8),
-              // Informasi penulis dan tanggal
-              Text(
-                "By ${post.fields.authorName} on $dateString",
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
-              ),
-              const SizedBox(height: 16),
-              // Baris untuk Like, Edit, Delete, dan Rekomendasi
-              Row(
-                children: [
-                  // Like
-                  InkWell(
-                    onTap: () => _toggleLike(post.pk),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.favorite,
-                          color: post.fields.isLiked
-                              ? Colors.red
-                              : Colors.blueGrey,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          "${post.fields.totalLikes}",
+              Wrap(
+                spacing: 8.0,
+                runSpacing: 8.0,
+                children: restaurants.map((restaurant) => InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RestaurantPage(
+                              restaurantName: restaurant.pk,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Chip(
+                        label: Text(
+                          restaurant.fields.name,
                           style: const TextStyle(fontSize: 14),
                         ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  // Edit
-                  InkWell(
-                    onTap: () => _editPost(post),
-                    child: Row(
-                      children: const [
-                        Icon(Icons.edit, color: Colors.green),
-                        SizedBox(width: 4),
-                        Text("Edit",
-                            style:
-                                TextStyle(fontSize: 14, color: Colors.green)),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  // Delete
-                  InkWell(
-                    onTap: () => _deletePost(post.pk),
-                    child: Row(
-                      children: const [
-                        Icon(Icons.close, color: Colors.red),
-                        SizedBox(width: 4),
-                        Text("Delete",
-                            style:
-                                TextStyle(fontSize: 14, color: Colors.red)),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  // Rekomendasi
-                  InkWell(
-                    onTap: () {
-                      _showRecommendations(restaurants);
-                    },
-                    child: Row(
-                      children: const [
-                        Icon(Icons.restaurant, color: Colors.blue),
-                        SizedBox(width: 4),
-                        Text("Recommendations",
-                            style:
-                                TextStyle(fontSize: 14, color: Colors.blue)),
-                      ],
-                    ),
-                  ),
-                ],
-              )
+                        backgroundColor: Colors.blue.shade50,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    )).toList(),
+              ),
             ],
           ),
-        ),
-      );
-    }
+          const SizedBox(height: 16),
+          // Baris untuk Like, Edit, dan Delete
+          Row(
+            children: [
+              // Like
+              InkWell(
+                onTap: () => _toggleLike(post.pk),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.favorite,
+                      color: post.fields.isLiked
+                          ? Colors.red
+                          : Colors.blueGrey,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      "${post.fields.totalLikes}",
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 16),
+              // Edit
+              InkWell(
+                onTap: () => _editPost(post),
+                child: Row(
+                  children: const [
+                    Icon(Icons.edit, color: Colors.green),
+                    SizedBox(width: 4),
+                    Text("Edit",
+                        style:
+                            TextStyle(fontSize: 14, color: Colors.green)),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 16),
+              // Delete
+              InkWell(
+                onTap: () => _deletePost(post.pk),
+                child: Row(
+                  children: const [
+                    Icon(Icons.close, color: Colors.red),
+                    SizedBox(width: 4),
+                    Text("Delete",
+                        style:
+                            TextStyle(fontSize: 14, color: Colors.red)),
+                  ],
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    ),
+  );
+}
+
 
    
 

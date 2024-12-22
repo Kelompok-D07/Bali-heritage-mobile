@@ -1,5 +1,3 @@
-// lib/forum_edit_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -18,12 +16,33 @@ class _ForumEditPageState extends State<ForumEditPage> {
   final _formKey = GlobalKey<FormState>();
   late String _title;
   late String _content;
+  String? _selectedRecommendation;
+  List<dynamic> _restaurants = [];
 
   @override
   void initState() {
     super.initState();
     _title = widget.post.fields.title;
     _content = widget.post.fields.content;
+    _selectedRecommendation = widget.post.fields.recommendations.isNotEmpty
+        ? widget.post.fields.recommendations[0].toString()
+        : null;
+    _fetchRestaurants();
+  }
+
+  Future<void> _fetchRestaurants() async {
+    final request = Provider.of<CookieRequest>(context, listen: false);
+    final url = 'http://127.0.0.1:8000/get-restaurants/';
+    try {
+      final response = await request.get(url);
+      setState(() {
+        _restaurants = response;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching restaurants: $e')),
+      );
+    }
   }
 
   Future<void> _submitForm() async {
@@ -31,32 +50,26 @@ class _ForumEditPageState extends State<ForumEditPage> {
       _formKey.currentState!.save();
       final request = Provider.of<CookieRequest>(context, listen: false);
 
-      // Siapkan data yang akan dikirim sebagai JSON
       final data = {
         'title': _title,
         'content': _content,
+        'recommendations': [_selectedRecommendation],
       };
 
       final jsonData = jsonEncode(data);
       final url = 'http://127.0.0.1:8000/forum/edit_post_flutter/${widget.post.pk}/';
-      print('Sending POST request to: $url'); // Debugging
-      print('Data: $jsonData'); // Debugging
-
       try {
-        // Kirim permintaan POST dengan data JSON
         final response = await request.postJson(url, jsonData);
-        print('Edit Post Response: $response'); // Debugging
-
         if (response['success'] == true) {
-          Navigator.pop(context, true); // Kembali ke halaman forum dengan hasil sukses
+          Navigator.pop(context, true);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(response['error'] ?? 'Gagal mengedit post.'))
+            SnackBar(content: Text(response['error'] ?? 'Gagal mengedit post.')),
           );
         }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.toString()}'))
+          SnackBar(content: Text('Error: ${e.toString()}')),
         );
       }
     }
@@ -72,7 +85,6 @@ class _ForumEditPageState extends State<ForumEditPage> {
           key: _formKey,
           child: Column(
             children: [
-              // Input untuk judul
               TextFormField(
                 initialValue: _title,
                 decoration: const InputDecoration(labelText: 'Judul'),
@@ -80,7 +92,6 @@ class _ForumEditPageState extends State<ForumEditPage> {
                 validator: (val) =>
                     val == null || val.isEmpty ? 'Judul wajib diisi' : null,
               ),
-              // Input untuk konten
               TextFormField(
                 initialValue: _content,
                 decoration: const InputDecoration(labelText: 'Konten'),
@@ -89,7 +100,22 @@ class _ForumEditPageState extends State<ForumEditPage> {
                     val == null || val.isEmpty ? 'Konten wajib diisi' : null,
               ),
               const SizedBox(height: 16),
-              // Tombol untuk menyimpan perubahan
+              DropdownButtonFormField<String>(
+                value: _selectedRecommendation,
+                decoration: const InputDecoration(labelText: 'Pilih Restoran untuk Rekomendasi'),
+                items: _restaurants.map<DropdownMenuItem<String>>((restaurant) {
+                  return DropdownMenuItem<String>(
+                    value: restaurant['pk'].toString(),
+                    child: Text(restaurant['fields']['name']),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedRecommendation = value;
+                  });
+                },
+              ),
+              const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _submitForm,
                 child: const Text('Save Changes'),
