@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:bali_heritage/Review/models/review_entry.dart';
 import 'package:bali_heritage/widgets/left_drawer.dart';
-import 'package:bali_heritage/Homepage/models/restaurant.dart'; 
+import 'package:bali_heritage/Homepage/models/Restaurant.dart'; 
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
