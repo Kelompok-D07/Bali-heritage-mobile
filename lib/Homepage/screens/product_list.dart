@@ -30,7 +30,7 @@ class _ProductListPageState extends State<ProductListPage> {
   // Notes: FetchProduct menggunakan CookieRequest agar memunculkan toggle bookmarked unik setiap user
   Future<List<Product>> fetchProducts(CookieRequest request, String category) async {
     final response = await request.get(
-      'http://localhost:8000/get-products-by-category/?category=$category', // Update URL as needed
+      'http://127.0.0.1:8000/get-products-by-category/?category=$category', // Update URL as needed
     );
     List<Product> listProduct = [];
     for (var d in response) {
@@ -44,7 +44,7 @@ class _ProductListPageState extends State<ProductListPage> {
   Future<void> deleteProduct(CookieRequest request, int productId) async {
   try {
     final response = await http.post(
-      Uri.parse('http://localhost:8000/delete-product-flutter/'),
+      Uri.parse('http://127.0.0.1:8000/delete-product-flutter/'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'id': productId}),
     );
@@ -72,7 +72,7 @@ class _ProductListPageState extends State<ProductListPage> {
 }
 
   Future<List<Category>> fetchCategories() async {
-    final response = await http.get(Uri.parse('http://localhost:8000/get-categories/')); // Update URL as needed
+    final response = await http.get(Uri.parse('http://127.0.0.1:8000/get-categories/')); // Update URL as needed
     if (response.statusCode == 200) {
       final List<Category> categories = categoryFromJson(response.body);
       return categories;
@@ -84,7 +84,7 @@ class _ProductListPageState extends State<ProductListPage> {
   Future<void> toggleBookmark(CookieRequest request, String productName) async {
     try {
       final response = await request.postJson(
-        "http://localhost:8000/bookmarks/toogle-bookmark/",
+        "http://127.0.0.1:8000/bookmarks/toogle-bookmark/",
         jsonEncode(<String, String>{
           'product_name': productName,
         }),
@@ -114,7 +114,7 @@ class _ProductListPageState extends State<ProductListPage> {
 
   @override
   Widget build(BuildContext context) {
-    final request = context.read<CookieRequest>(); // Akses CookieRequest
+    final request = context.watch<CookieRequest>(); // Akses CookieRequest
 
     // Inisialisasi future di sini menggunakan request
     _products = fetchProducts(request, selectedCategory);
